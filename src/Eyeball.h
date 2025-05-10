@@ -1,0 +1,54 @@
+/**
+ *        d8888 888               8888888888
+ *       d88888 888               888
+ *      d88P888 888               888
+ *     d88P 888 88888b.   .d88b.  8888888   888  888  .d88b.  .d8888b
+ *    d88P  888 888 "88b d8P  Y8b 888       888  888 d8P  Y8b 88K
+ *   d88P   888 888  888 88888888 888       888  888 88888888 "Y8888b.
+ *  d8888888888 888 d88P Y8b.     888       Y88b 888 Y8b.          X88
+ * d88P     888 88888P"   "Y8888  8888888888 "Y88888  "Y8888   88888P'
+ *                                               888
+ * Somebody's watching me 8-)               Y8b d88P
+ *                                           "Y88P"
+ * Copyright (c) 2025, Abe Mishler
+ * Licensed under the Universal Permissive License v 1.0
+ * as shown at https://oss.oracle.com/licenses/upl/.
+ */
+
+#pragma once
+
+// Project includes.
+#include "graphics/Grob.h"
+
+// Library includes.
+#include <SDL2/SDL.h>
+
+namespace ABE {
+
+/**
+ * @brief Represents an eye (to watch the mouse cursor.)
+ * @date May-2025
+ */
+class Eyeball
+{
+  public:
+    Eyeball();
+    Eyeball(const SDL_Point& p_pos, int p_white_rad, int p_look_rad);
+    ~Eyeball();
+
+    void update(const SDL_Point& p_mouse);
+    void render() const;
+
+  private:
+    void setLookPos(const SDL_Point& p_pos);
+
+    // Attributes
+  private:
+    Grob m_white_grob; // white of the eye
+    Grob m_pupil_grob; // pupil of the eye
+
+    int m_white_radius = 0;
+    int m_look_radius = 0;
+};
+
+} // namespace ABE
