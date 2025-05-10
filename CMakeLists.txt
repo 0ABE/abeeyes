@@ -63,10 +63,20 @@ list(APPEND SRC_CODE
   "src/Eyeball.cpp"
   "src/Eyeball.h"
   "src/MouseAttrs.h"
-  "src/System.cpp"
-  "src/System.h"
   "src/main.cpp"
 )
+
+if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+list(APPEND SRC_CODE
+  "src/platform/MacSystem.cpp"
+  "src/platform/MacSystem.h"
+)
+elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+list(APPEND SRC_CODE
+  "src/platform/LinuxSystem.cpp"
+  "src/platform/LinuxSystem.h"
+)
+endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 
@@ -101,7 +111,13 @@ target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC
 # Link the following libraries into the target executable.
 target_link_libraries(${CMAKE_PROJECT_NAME} SDL2 SDL2_image)
 
+if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+# Link the CoreGraphics and Foundation libs for macOS.
+  target_link_libraries(${CMAKE_PROJECT_NAME}
+    "-framework CoreGraphics"
+    "-framework Foundation"
+  )
+elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
 # Link the X11 libs for Linux.
-if (CMAKE_SYSTEM_NAME MATCHES "Linux")
   target_link_libraries(${CMAKE_PROJECT_NAME} X11)
 endif()

@@ -16,11 +16,11 @@
  */
 
 // Project includes.
-#include "System.h"
+#include "LinuxSystem.h"
 
 namespace ABE {
 
-System::System()
+LinuxSystem::LinuxSystem()
 {
     mp_x11_display = XOpenDisplay(getenv("DISPLAY"));
     if (mp_x11_display) {
@@ -36,10 +36,10 @@ System::System()
     }
 }
 
-System::~System() = default;
+LinuxSystem::~LinuxSystem() = default;
 
 bool
-System::getCursorPos(SDL_Window* p_sdl_window, MouseAttrs* p_mouse) const
+LinuxSystem::getCursorPos(SDL_Window* p_sdl_window, MouseAttrs* p_mouse) const
 {
     SDL_Point mouse, window;
     unsigned int mask;

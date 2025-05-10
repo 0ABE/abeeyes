@@ -18,10 +18,10 @@
 #pragma once
 
 // Project includes.
-#include "MouseAttrs.h"
+#include "../MouseAttrs.h"
 
 // OS includes.
-#include <X11/Xlib.h>
+#include <CoreGraphics/CGDisplayConfiguration.h>
 
 // Library includes.
 #include <SDL2/SDL.h>
@@ -34,11 +34,11 @@ namespace ABE {
  *        mouse coordinates in the screen/desktop coordinate system.
  * @date May-2025
  */
-class System
+class MacSystem
 {
   public:
-    System();
-    ~System();
+    MacSystem();
+    ~MacSystem();
 
     bool getCursorPos(SDL_Window* p_sdl_window, MouseAttrs* p_mouse) const;
 
@@ -48,12 +48,11 @@ class System
     const std::string* getErrorMsg() const { return &m_error_msg; }
 
   private:
-    Display* mp_x11_display = nullptr;
-    Window m_x11_desktop;
-    SDL_Rect m_desktop_area;
+    SDL_Rect m_desktop_area = { 0 };
     MouseAttrs m_mouse;
 
     mutable std::string m_error_msg = {}; // possibly changed in getCursorPos()
 };
 
 } // namespace ABE
+

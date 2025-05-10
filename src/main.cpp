@@ -16,8 +16,12 @@
  */
 
 // Project includes.
+#if defined(__APPLE__)
+#include "platform/MacSystem.h"
+#elif defined(__linux__)
+#include "platform/LinuxSystem.h"
+#endif
 #include "Eyeball.h"
-#include "System.h"
 #include "graphics/Grob.h"
 #include "graphics/LoopType.h"
 #include "graphics/Resources.h"
@@ -39,9 +43,13 @@ const int g_win_width = 128;
 const int g_win_height = 64;
 
 // Globals.
+#if defined(__APPLE__)
+ABE::MacSystem g_system;
+#elif defined(__linux__)
+ABE::LinuxSystem g_system;
+#endif
 SDL_Window* gp_sdl_window = nullptr;
 SDL_Renderer* gp_sdl_renderer = nullptr;
-ABE::System g_system;
 ABE::MouseAttrs g_mouse;
 // A "layer" for eyeball rendering.
 std::map<std::string, ABE::Eyeball> g_eyeball_layer;
