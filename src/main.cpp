@@ -22,6 +22,8 @@
 #include "platform/LinuxSystem.h"
 #endif
 #include "Eyeball.h"
+#include "MouseAttrs.h"
+#include "graphics/AlignTypes.h"
 #include "graphics/Grob.h"
 #include "graphics/LoopType.h"
 #include "graphics/Resources.h"
@@ -37,12 +39,10 @@
 // Standard library includes.
 #include <iostream>
 #include <map>
-
-// Global constants.
-const int g_win_width = 128;
-const int g_win_height = 64;
+#include <memory>
 
 // Globals.
+SDL_Rect g_win_rect{ 0, 0, 128, 64 };
 #if defined(__APPLE__)
 ABE::MacSystem g_system;
 #elif defined(__linux__)
@@ -75,11 +75,11 @@ void
 update();
 
 int
-main()
+main(int argc, char* argv[])
 {
     // Check if there was an error initializing the desktop area.
     if (g_system.error()) {
-        std::cerr << g_system.getErrorMsg();
+        std::cerr << g_system.getErrorMsg() << "\n";
         return EXIT_FAILURE;
     }
 
@@ -107,6 +107,27 @@ mainLoop()
             if (SDL_QUIT == e.type) {
                 running = false;
                 break;
+            } else if (e.type == SDL_KEYDOWN) {
+                switch (e.key.keysym.sym) {
+                    case SDLK_q:
+                        running = false;
+                        break;
+                    case SDLK_UP:
+                        g_system.updateWindowRect(ABE::HAlign::NONE, ABE::VAlign::TOP, g_win_rect);
+                        break;
+                    case SDLK_DOWN:
+                        g_system.updateWindowRect(ABE::HAlign::NONE, ABE::VAlign::BOTTOM, g_win_rect);
+                        break;
+                    case SDLK_LEFT:
+                        g_system.updateWindowRect(ABE::HAlign::LEFT, ABE::VAlign::NONE, g_win_rect);
+                        break;
+                    case SDLK_RIGHT:
+                        g_system.updateWindowRect(ABE::HAlign::RIGHT, ABE::VAlign::NONE, g_win_rect);
+                        break;
+                }
+                SDL_SetWindowPosition(gp_sdl_window, g_win_rect.x, g_win_rect.y);
+                // Update the win rect with the actual position in case desktop furniture got in the way.
+                SDL_GetWindowPosition(gp_sdl_window, &g_win_rect.x, &g_win_rect.y);
             }
         }
         if (running) {
@@ -124,7 +145,7 @@ close()
     SDL_DestroyRenderer(gp_sdl_renderer);
     SDL_DestroyWindow(gp_sdl_window);
 
-    // Quit SDL.
+    // Quit SDL subsystems.
     IMG_Quit();
     SDL_Quit();
 }
@@ -154,7 +175,9 @@ initResources()
 bool
 initSDL(const char* p_win_title)
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+    // Init SDL subsystems.
+    const Uint32 sdl_flags = SDL_INIT_VIDEO | SDL_INIT_EVENTS;
+    if (SDL_Init(sdl_flags) < 0) {
         std::cerr << "Failure to initialize SDL: " << SDL_GetError() << "\n";
         close();
         return false;
@@ -164,16 +187,19 @@ initSDL(const char* p_win_title)
         std::cout << "Failure to enable linear texture filtering\n";
 
     // Make a borderless window and place it in the lower right corner.
-    const Uint32 win_flags = SDL_WINDOW_SHOWN /*| SDL_WINDOW_UTILITY */ | SDL_WINDOW_BORDERLESS;
-    const SDL_Rect* desktop_area = g_system.getDesktopArea();
-    const int win_x = desktop_area->w - g_win_width;
-    const int win_y = desktop_area->h - g_win_height;
-    gp_sdl_window = SDL_CreateWindow(p_win_title, win_x, win_y, g_win_width, g_win_height, win_flags);
+    const Uint32 win_flags = /*| SDL_WINDOW_UTILITY */ SDL_WINDOW_BORDERLESS;
+    g_system.updateWindowRect(ABE::HAlign::RIGHT, ABE::VAlign::BOTTOM, g_win_rect);
+    gp_sdl_window = SDL_CreateWindow(p_win_title, g_win_rect.x, g_win_rect.y, g_win_rect.w, g_win_rect.h, win_flags);
     if (!gp_sdl_window) {
         std::cerr << "Failure to create SDL Window: " << SDL_GetError() << "\n";
         close();
         return false;
     }
+
+    // Update the actual window position into the window rect.
+    // It might not have been created in the actual location specified
+    // above due to other system furniture like a dock or taskbar.
+    SDL_GetWindowPosition(gp_sdl_window, &g_win_rect.x, &g_win_rect.y);
 
     const Uint32 renderer_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
     gp_sdl_renderer = SDL_CreateRenderer(gp_sdl_window, -1, renderer_flags);
@@ -204,9 +230,19 @@ initSDL(const char* p_win_title)
 }
 
 void
+update()
+{
+    // Get the current mouse/cursor position and button presses...
+    g_system.updateMouse(gp_sdl_window, &g_mouse);
+    // and use it to update where the eyeballs look.
+    for (auto& it : g_eyeball_layer)
+        it.second.update(g_mouse.pos_wrt_window);
+}
+
+void
 render()
 {
-    SDL_SetRenderDrawColor(gp_sdl_renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(gp_sdl_renderer, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(gp_sdl_renderer);
 
     // Render the eyeballs.
@@ -214,14 +250,4 @@ render()
         it.second.render();
 
     SDL_RenderPresent(gp_sdl_renderer);
-}
-
-void
-update()
-{
-    // Get the current mouse/cursor position...
-    g_system.getCursorPos(gp_sdl_window, &g_mouse);
-    // and use it to update where the eyeballs look.
-    for (auto& it : g_eyeball_layer)
-        it.second.update(g_mouse.wrt_window);
 }

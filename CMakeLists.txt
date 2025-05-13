@@ -49,6 +49,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # ---- Source code defined  --------------------------
 list(APPEND SRC_CODE
+  "src/graphics/AlignTypes.h"
   "src/graphics/Grob.cpp"
   "src/graphics/Grob.h"
   "src/graphics/LoopType.h"
@@ -60,6 +61,8 @@ list(APPEND SRC_CODE
   "src/graphics/SpriteList.h"
   "src/graphics/Texture.cpp"
   "src/graphics/Texture.h"
+  "src/platform/AbstractSystem.cpp"
+  "src/platform/AbstractSystem.h"
   "src/Eyeball.cpp"
   "src/Eyeball.h"
   "src/MouseAttrs.h"

@@ -15,36 +15,30 @@
  * as shown at https://oss.oracle.com/licenses/upl/.
  */
 
-// Project includes.
-#include "MacSystem.h"
-
-// OS includes.
-#include <CoreGraphics/CGEvent.h>
+#pragma once
 
 namespace ABE {
 
-MacSystem::MacSystem()
+/**
+ * @brief For use with automatic assignment to a screen corner.
+ * @date May-2025
+ */
+enum class VAlign
 {
-    CGDirectDisplayID main_display_ID = CGMainDisplayID();
-    m_desktop_area.x = 0;
-    m_desktop_area.y = 0;
-    m_desktop_area.w = CGDisplayPixelsWide(main_display_ID);
-    m_desktop_area.h = CGDisplayPixelsHigh(main_display_ID);
-}
+    NONE,
+    TOP,
+    BOTTOM
+};
 
-MacSystem::~MacSystem() = default;
-
-bool
-MacSystem::systemMouse(SDL_Point& p_mouse) const
+/**
+ * @brief For use with automatic assignment to a screen corner.
+ * @date May-2025
+ */
+enum class HAlign
 {
-    CGEventRef event = CGEventCreate(nullptr);
-    CGPoint mouse = CGEventGetLocation(event);
-    CFRelease(event);
-
-    p_mouse.x = mouse.x;
-    p_mouse.y = mouse.y;
-
-    return true;
-}
+    NONE,
+    LEFT,
+    RIGHT
+};
 
 } // namespace ABE

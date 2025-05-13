@@ -17,37 +17,44 @@
 
 #pragma once
 
-// Project includes.
-#include "../MouseAttrs.h"
-#include "AbstractSystem.h"
-
-// OS includes.
-#include <X11/Xlib.h>
-
 // Library includes.
 #include <SDL2/SDL.h>
 #include <string>
 
+// Forward declarations.
+namespace ABE {
+class MouseAttrs;
+enum class HAlign;
+enum class VAlign;
+}
+
 namespace ABE {
 
 /**
- * @brief Interacts with OS-specific libraries to provide
- *        mouse coordinates in the screen/desktop coordinate system.
+ * @brief Provides mouse coordinates in the screen/desktop coordinate system.
  * @date May-2025
  */
-class LinuxSystem : public AbstractSystem
+class AbstractSystem
 {
   public:
-    LinuxSystem();
-    ~LinuxSystem();
+    AbstractSystem();
+    ~AbstractSystem();
 
-    // System Interface.
+    virtual bool updateMouse(SDL_Window* p_sdl_window, MouseAttrs* p_mouse) const;
+    virtual void updateWindowRect(HAlign p_h, VAlign p_v, SDL_Rect& p_win_rect) const;
+
+    virtual bool error() const { return !m_error_msg.empty(); }
+    virtual const std::string* getErrorMsg() const { return &m_error_msg; }
+
+    virtual const SDL_Rect* getDesktopArea() const { return &m_desktop_area; }
+
   protected:
-    bool systemMouse(SDL_Point& p_mouse) const;
+    virtual bool systemMouse(SDL_Point& p_mouse) const = 0;
 
-  private:
-    Display* mp_x11_display = nullptr;
-    Window m_x11_desktop;
+    // Attributes.
+  protected:
+    SDL_Rect m_desktop_area = { 0 };
+    mutable std::string m_error_msg = {}; // possibly changed in updateMouse()
 };
 
 } // namespace ABE

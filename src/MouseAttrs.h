@@ -23,15 +23,21 @@
 namespace ABE {
 
 /**
- * @brief A data structure to hold mouse coordinates
- *        wrt_screen: in the desktop/screen coordinate system, and
- *        wrt_window: in the application/window coordinate system.
+ * @brief A data structure to hold mouse coordinates and button clicks.
  * @date May-2025
  */
 typedef struct MouseAttrs
 {
-    SDL_Point wrt_screen = { 0 };
-    SDL_Point wrt_window = { 0 };
+    // Mouse position in the desktop/screen coordinate system.
+    SDL_Point pos_wrt_screen = { 0 };
+    // Mouse position in the application/window coordinate system.
+    SDL_Point pos_wrt_window = { 0 };
+    // Left button is down.
+    bool left_btn_down = false;
+    // Middle button is down.
+    bool middle_btn_down = false;
+    // Right button is down.
+    bool right_btn_down = false;
 } MouseAttrs;
 
 } // namespace ABE

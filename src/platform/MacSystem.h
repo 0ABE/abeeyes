@@ -19,6 +19,7 @@
 
 // Project includes.
 #include "../MouseAttrs.h"
+#include "AbstractSystem.h"
 
 // OS includes.
 #include <CoreGraphics/CGDisplayConfiguration.h>
@@ -34,25 +35,15 @@ namespace ABE {
  *        mouse coordinates in the screen/desktop coordinate system.
  * @date May-2025
  */
-class MacSystem
+class MacSystem : public AbstractSystem
 {
   public:
     MacSystem();
     ~MacSystem();
 
-    bool getCursorPos(SDL_Window* p_sdl_window, MouseAttrs* p_mouse) const;
-
-    const SDL_Rect* getDesktopArea() const { return &m_desktop_area; }
-
-    bool error() const { return !m_error_msg.empty(); }
-    const std::string* getErrorMsg() const { return &m_error_msg; }
-
-  private:
-    SDL_Rect m_desktop_area = { 0 };
-    MouseAttrs m_mouse;
-
-    mutable std::string m_error_msg = {}; // possibly changed in getCursorPos()
+    // System Interface.
+  protected:
+    bool systemMouse(SDL_Point& p_mouse) const;
 };
 
 } // namespace ABE
-
