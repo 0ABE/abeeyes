@@ -21,7 +21,7 @@
 // OS includes.
 #include <CoreGraphics/CGEvent.h>
 
-namespace ABE {
+namespace AbeEyes {
 
 MacSystem::MacSystem()
 {
@@ -47,4 +47,4 @@ MacSystem::systemMouse(SDL_Point& p_mouse) const
     return true;
 }
 
-} // namespace ABE
+} // namespace AbeEyes

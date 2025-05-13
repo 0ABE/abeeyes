@@ -44,15 +44,15 @@
 // Globals.
 SDL_Rect g_win_rect{ 0, 0, 128, 64 };
 #if defined(__APPLE__)
-ABE::MacSystem g_system;
+AbeEyes::MacSystem g_system;
 #elif defined(__linux__)
-ABE::LinuxSystem g_system;
+AbeEyes::LinuxSystem g_system;
 #endif
 SDL_Window* gp_sdl_window = nullptr;
 SDL_Renderer* gp_sdl_renderer = nullptr;
-ABE::MouseAttrs g_mouse;
+AbeEyes::MouseAttrs g_mouse;
 // A "layer" for eyeball rendering.
-std::map<std::string, ABE::Eyeball> g_eyeball_layer;
+std::map<std::string, AbeEyes::Eyeball> g_eyeball_layer;
 
 // Function prototypes.
 // Shut down SDL and free resources.
@@ -113,16 +113,16 @@ mainLoop()
                         running = false;
                         break;
                     case SDLK_UP:
-                        g_system.updateWindowRect(ABE::HAlign::NONE, ABE::VAlign::TOP, g_win_rect);
+                        g_system.updateWindowRect(AbeEyes::HAlign::NONE, AbeEyes::VAlign::TOP, g_win_rect);
                         break;
                     case SDLK_DOWN:
-                        g_system.updateWindowRect(ABE::HAlign::NONE, ABE::VAlign::BOTTOM, g_win_rect);
+                        g_system.updateWindowRect(AbeEyes::HAlign::NONE, AbeEyes::VAlign::BOTTOM, g_win_rect);
                         break;
                     case SDLK_LEFT:
-                        g_system.updateWindowRect(ABE::HAlign::LEFT, ABE::VAlign::NONE, g_win_rect);
+                        g_system.updateWindowRect(AbeEyes::HAlign::LEFT, AbeEyes::VAlign::NONE, g_win_rect);
                         break;
                     case SDLK_RIGHT:
-                        g_system.updateWindowRect(ABE::HAlign::RIGHT, ABE::VAlign::NONE, g_win_rect);
+                        g_system.updateWindowRect(AbeEyes::HAlign::RIGHT, AbeEyes::VAlign::NONE, g_win_rect);
                         break;
                 }
                 SDL_SetWindowPosition(gp_sdl_window, g_win_rect.x, g_win_rect.y);
@@ -154,14 +154,14 @@ bool
 initResources()
 {
     // Load the spritesheet as a texture for clipping into Sprites.
-    ABE::Texture* spritesheet = ABE::Resources::addTexture({ gp_sdl_renderer });
+    AbeEyes::Texture* spritesheet = AbeEyes::Resources::addTexture({ gp_sdl_renderer });
     const char* file_path = "../rsrc/blink_sheet.png";
     if (!spritesheet->load(file_path, { 0xD7, 0x7B, 0xBA, SDL_ALPHA_OPAQUE })) {
         return false;
     }
 
     // Create the eyes.
-    ABE::Eyeball
+    AbeEyes::Eyeball
       left_eye({ 32, 32 }, 32, 12),
       right_eye({ 96, 32 }, 32, 12);
 
@@ -188,7 +188,7 @@ initSDL(const char* p_win_title)
 
     // Make a borderless window and place it in the lower right corner.
     const Uint32 win_flags = /*| SDL_WINDOW_UTILITY */ SDL_WINDOW_BORDERLESS;
-    g_system.updateWindowRect(ABE::HAlign::RIGHT, ABE::VAlign::BOTTOM, g_win_rect);
+    g_system.updateWindowRect(AbeEyes::HAlign::RIGHT, AbeEyes::VAlign::BOTTOM, g_win_rect);
     gp_sdl_window = SDL_CreateWindow(p_win_title, g_win_rect.x, g_win_rect.y, g_win_rect.w, g_win_rect.h, win_flags);
     if (!gp_sdl_window) {
         std::cerr << "Failure to create SDL Window: " << SDL_GetError() << "\n";

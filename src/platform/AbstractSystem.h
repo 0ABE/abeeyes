@@ -22,13 +22,13 @@
 #include <string>
 
 // Forward declarations.
-namespace ABE {
+namespace AbeEyes {
 class MouseAttrs;
 enum class HAlign;
 enum class VAlign;
 }
 
-namespace ABE {
+namespace AbeEyes {
 
 /**
  * @brief Provides mouse coordinates in the screen/desktop coordinate system.
@@ -57,4 +57,4 @@ class AbstractSystem
     mutable std::string m_error_msg = {}; // possibly changed in updateMouse()
 };
 
-} // namespace ABE
+} // namespace AbeEyes

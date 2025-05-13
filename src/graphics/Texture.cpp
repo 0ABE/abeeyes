@@ -25,7 +25,7 @@
 // Standard library includes.
 #include <iostream>
 
-namespace ABE {
+namespace AbeEyes {
 
 Texture::Texture() = default;
 
@@ -155,4 +155,4 @@ Texture::initTexture()
     return true;
 }
 
-} // namespace ABE
+} // namespace AbeEyes

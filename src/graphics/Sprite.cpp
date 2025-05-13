@@ -25,7 +25,7 @@
 // Standard library includes.
 #include <iostream>
 
-namespace ABE {
+namespace AbeEyes {
 
 Sprite::Sprite(const SDL_Rect& p_rect)
   : m_rect(p_rect)
@@ -80,4 +80,4 @@ Sprite::setTexture(const Texture* p_texture)
     mp_texture = const_cast<Texture*>(p_texture);
 }
 
-} // namespace ABE
+} // namespace AbeEyes

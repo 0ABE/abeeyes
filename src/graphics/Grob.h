@@ -23,7 +23,7 @@
 // Library includes.
 #include <SDL2/SDL.h>
 
-namespace ABE {
+namespace AbeEyes {
 
 /**
  * @brief A grob represents a graphical object with a position,
@@ -54,4 +54,4 @@ class Grob
     size_t m_current_spritelist_idx = 0; // index to the current spritelist to render
 };
 
-} // namespace ABE
+} // namespace AbeEyes

@@ -28,7 +28,7 @@
 #include <SDL2/SDL.h>
 #include <string>
 
-namespace ABE {
+namespace AbeEyes {
 
 /**
  * @brief Interacts with OS-specific libraries to provide
@@ -46,4 +46,4 @@ class MacSystem : public AbstractSystem
     bool systemMouse(SDL_Point& p_mouse) const;
 };
 
-} // namespace ABE
+} // namespace AbeEyes

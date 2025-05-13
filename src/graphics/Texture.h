@@ -20,7 +20,7 @@
 // Library includes.
 #include <SDL2/SDL_image.h>
 
-namespace ABE {
+namespace AbeEyes {
 
 /**
  * @brief A piece of artwork. Can be used as a single piece,
@@ -61,4 +61,4 @@ class Texture
     SDL_Texture* m_sdl_texture = nullptr;
 };
 
-} // namespace ABE
+} // namespace AbeEyes

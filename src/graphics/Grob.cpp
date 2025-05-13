@@ -18,7 +18,7 @@
 // Project includes.
 #include "Grob.h"
 
-namespace ABE {
+namespace AbeEyes {
 
 Grob::Grob() = default;
 
@@ -60,4 +60,4 @@ Grob::renderSpriteList(size_t p_idx) const
         ss->render(m_pos);
 }
 
-}; // namespace ABE
+}; // namespace AbeEyes

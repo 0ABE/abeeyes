@@ -24,7 +24,7 @@
 // Standard library includes.
 #include <vector>
 
-namespace ABE {
+namespace AbeEyes {
 
 // Type definitions.
 typedef std::vector<Sprite> Sprites;
@@ -71,4 +71,4 @@ class SpriteList
     bool m_visible = true;
 };
 
-} // namespace ABE
+} // namespace AbeEyes

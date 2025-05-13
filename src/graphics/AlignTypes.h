@@ -17,7 +17,7 @@
 
 #pragma once
 
-namespace ABE {
+namespace AbeEyes {
 
 /**
  * @brief For use with automatic assignment to a screen corner.
@@ -41,4 +41,4 @@ enum class HAlign
     RIGHT
 };
 
-} // namespace ABE
+} // namespace AbeEyes

@@ -19,7 +19,7 @@
 #include "SpriteList.h"
 #include "Texture.h"
 
-namespace ABE {
+namespace AbeEyes {
 
 SpriteList::SpriteList(const char* p_name)
   : m_name(p_name)
@@ -133,4 +133,4 @@ SpriteList::render(const SDL_Point& p_pos) const
     getNext().render(p_pos);
 }
 
-} // namespace ABE
+} // namespace AbeEyes

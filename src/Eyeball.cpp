@@ -18,7 +18,7 @@
 // Project includes.
 #include "Eyeball.h"
 
-namespace ABE {
+namespace AbeEyes {
 
 Eyeball::Eyeball()
 {
@@ -103,4 +103,4 @@ Eyeball::update(const SDL_Point& p_mouse)
     }
 }
 
-} // namespace ABE
+} // namespace AbeEyes

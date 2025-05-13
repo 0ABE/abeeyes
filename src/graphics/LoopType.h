@@ -17,7 +17,7 @@
 
 #pragma once
 
-namespace ABE {
+namespace AbeEyes {
 
 /**
  * @brief Different types of loops (initially for a SpriteList.)
@@ -31,4 +31,4 @@ enum class LoopType
     FWD_REV
 };
 
-} // namespace ABE
+} // namespace AbeEyes

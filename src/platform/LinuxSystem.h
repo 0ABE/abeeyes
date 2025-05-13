@@ -28,7 +28,7 @@
 #include <SDL2/SDL.h>
 #include <string>
 
-namespace ABE {
+namespace AbeEyes {
 
 /**
  * @brief Interacts with OS-specific libraries to provide
@@ -50,4 +50,4 @@ class LinuxSystem : public AbstractSystem
     Window m_x11_desktop;
 };
 
-} // namespace ABE
+} // namespace AbeEyes

@@ -18,7 +18,7 @@
 // Project includes.
 #include "Resources.h"
 
-namespace ABE {
+namespace AbeEyes {
 
 // Static members.
 static std::map<const char*, Texture> m_textures;
@@ -128,4 +128,4 @@ Resources::getTexture(const char* p_name)
     return nullptr;
 }
 
-}; // namespace ABE
+}; // namespace AbeEyes

@@ -18,7 +18,7 @@
 // Project includes.
 #include "LinuxSystem.h"
 
-namespace ABE {
+namespace AbeEyes {
 
 LinuxSystem::LinuxSystem()
 {
@@ -55,4 +55,4 @@ LinuxSystem::systemMouse(SDL_Point& p_mouse) const
     return true;
 }
 
-} // namespace ABE
+} // namespace AbeEyes

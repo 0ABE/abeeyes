@@ -23,7 +23,7 @@
 // Library includes.
 #include <SDL2/SDL.h>
 
-namespace ABE {
+namespace AbeEyes {
 
 /**
  * @brief Represents an eye (to watch the mouse cursor.)
@@ -51,4 +51,4 @@ class Eyeball
     int m_look_radius = 0;
 };
 
-} // namespace ABE
+} // namespace AbeEyes

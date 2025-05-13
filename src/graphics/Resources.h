@@ -25,7 +25,7 @@
 // Standard library includes.
 #include <map>
 
-namespace ABE {
+namespace AbeEyes {
 
 // Type definitions.
 typedef std::vector<SpriteList> SpriteLists;
@@ -66,4 +66,4 @@ class Resources
     SpriteLists m_spritelists;
 };
 
-} // namespace ABE
+} // namespace AbeEyes

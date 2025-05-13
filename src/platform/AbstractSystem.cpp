@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-namespace ABE {
+namespace AbeEyes {
 
 AbstractSystem::AbstractSystem()
 {
@@ -113,4 +113,4 @@ AbstractSystem::updateWindowRect(HAlign p_h, VAlign p_v, SDL_Rect& p_win_rect) c
     }
 }
 
-} // namespace ABE
+} // namespace AbeEyes

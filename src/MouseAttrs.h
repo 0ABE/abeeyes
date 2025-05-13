@@ -20,7 +20,7 @@
 // SDL library includes.
 #include <SDL2/SDL.h>
 
-namespace ABE {
+namespace AbeEyes {
 
 /**
  * @brief A data structure to hold mouse coordinates and button clicks.
@@ -40,4 +40,4 @@ typedef struct MouseAttrs
     bool right_btn_down = false;
 } MouseAttrs;
 
-} // namespace ABE
+} // namespace AbeEyes

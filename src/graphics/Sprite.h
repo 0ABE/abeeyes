@@ -22,11 +22,11 @@
 
 // Forward declarations.
 class SDL_Renderer;
-namespace ABE {
+namespace AbeEyes {
 class Texture;
 }
 
-namespace ABE {
+namespace AbeEyes {
 
 /**
  * @brief Represents an optionally clipped region of a texture.
@@ -59,4 +59,4 @@ class Sprite
     bool m_visible = true;
 };
 
-} // namespace ABE
+} // namespace AbeEyes
