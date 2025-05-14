@@ -24,13 +24,15 @@
 // Standard library includes.
 #include <vector>
 
+// Forward declarations.
+namespace AbeEyes {
+class Texture;
+}
+
 namespace AbeEyes {
 
 // Type definitions.
 typedef std::vector<Sprite> Sprites;
-
-// Forward declarations.
-class Texture;
 
 /**
  * @brief A list of Sprites for animation.
@@ -40,15 +42,14 @@ class SpriteList
 {
   public:
     SpriteList() = delete;
-    explicit SpriteList(const char* p_name);
-    SpriteList(const char* p_name, Texture* p_texture);
+    SpriteList(const SDL_Point& p_origin, Texture* p_texture);
+    SpriteList(Texture* p_texture);
     ~SpriteList();
 
     SpriteList* addSprite(Sprite&& p_sprite);
     // void setFramerate(int p_rate) { m_framerate = p_rate; }
     void setTexture(const Texture* p_texture) { m_texture = const_cast<Texture*>(p_texture); }
 
-    const Sprite& getNext() const;
     void setLoopType(LoopType p_loop_type);
 
     // void setSize(const SDL_Point& p_size);
@@ -58,17 +59,26 @@ class SpriteList
 
     void render(const SDL_Point& p_pos) const;
 
+    void setOrigin(const SDL_Point& p_origin);
+
   private:
-    const char* m_name;
+    const Sprite* getNext() const;
+    bool hasCustomOrigin() const;
+
+    // Attributes.
+  private:
     Texture* m_texture = nullptr;
     // int m_framerate = 0;
 
-    mutable int m_current = 0;
+    mutable size_t m_current = 0;
     mutable int m_loop_dir = 1;
 
     Sprites m_list = {};
     LoopType m_loop_type = LoopType::FORWARD;
-    bool m_visible = true;
+
+    mutable bool m_visible = true; // can be udpated by render()
+
+    SDL_Point m_origin = { 0 }; // offset origin
 };
 
 } // namespace AbeEyes

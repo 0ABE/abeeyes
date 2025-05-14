@@ -236,7 +236,7 @@ update()
     g_system.updateMouse(gp_sdl_window, &g_mouse);
     // and use it to update where the eyeballs look.
     for (auto& it : g_eyeball_layer)
-        it.second.update(g_mouse.pos_wrt_window);
+        it.second.update(g_mouse);
 }
 
 void

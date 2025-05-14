@@ -22,12 +22,29 @@ namespace AbeEyes {
 
 Grob::Grob() = default;
 
+Grob::Grob(const SDL_Point& p_origin)
+  : m_origin(p_origin)
+{
+}
+
 Grob::~Grob() = default;
 
-Resources*
+Sprite*
 Grob::addSprite(Sprite&& p_sprite)
 {
+    if (hasCustomOrigin())
+        p_sprite.setOrigin(m_origin);
+
     return m_resources.addSprite(std::move(p_sprite));
+}
+
+SpriteList*
+Grob::addSpriteList(SpriteList&& p_spritelist)
+{
+    if (hasCustomOrigin())
+        p_spritelist.setOrigin(m_origin);
+
+    return m_resources.addSpriteList(std::move(p_spritelist));
 }
 
 void
@@ -58,6 +75,12 @@ Grob::renderSpriteList(size_t p_idx) const
 {
     if (const SpriteList* ss = m_resources.getSpriteList(p_idx))
         ss->render(m_pos);
+}
+
+bool
+Grob::hasCustomOrigin() const
+{
+    return (m_origin.x != 0) && (m_origin.y != 0);
 }
 
 }; // namespace AbeEyes

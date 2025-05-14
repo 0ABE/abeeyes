@@ -25,6 +25,8 @@ namespace AbeEyes {
 
 MacSystem::MacSystem()
 {
+    // TODO: Determine if dock is visible and where.
+    //       Adjust the desktop area accordingly.
     CGDirectDisplayID main_display_ID = CGMainDisplayID();
     m_desktop_area.x = 0;
     m_desktop_area.y = 0;

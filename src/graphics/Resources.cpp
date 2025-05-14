@@ -17,6 +17,7 @@
 
 // Project includes.
 #include "Resources.h"
+#include "Texture.h"
 
 namespace AbeEyes {
 
@@ -27,18 +28,18 @@ Resources::Resources() = default;
 
 Resources::~Resources() = default;
 
-Resources*
+Sprite*
 Resources::addSprite(Sprite&& p_sprite)
 {
     m_sprites.emplace_back(std::move(p_sprite));
-    return this;
+    return &m_sprites.back();
 }
 
-Resources*
+SpriteList*
 Resources::addSpriteList(SpriteList&& p_spritelist)
 {
     m_spritelists.emplace_back(std::move(p_spritelist));
-    return this;
+    return &m_spritelists.back();
 }
 
 Texture*

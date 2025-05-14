@@ -18,41 +18,28 @@
 #pragma once
 
 // Project includes.
-#include "graphics/Grob.h"
 
-// Forward declarations.
+// Forward includes.
 namespace AbeEyes {
 class MouseAttrs;
 }
-class SDL_Point;
 
 namespace AbeEyes {
 
 /**
- * @brief Represents an eye (to watch the mouse cursor.)
+ * @brief Represents an eye state.
  * @date May-2025
  */
-class Eyeball
+class EyeState
 {
   public:
-    Eyeball();
-    Eyeball(const SDL_Point& p_pos, int p_white_rad, int p_look_rad);
-    ~Eyeball();
+    EyeState();
+    ~EyeState();
 
-    void update(const MouseAttrs& p_mouse);
-    void render() const;
-
-  private:
-    void setLookPos(const SDL_Point& p_pos);
+    virtual void handleInput(const MouseAttrs& p_mouse);
 
     // Attributes
   private:
-    Grob m_white{ { 32, 32 } };  // white of the eye
-    Grob m_pupil;                // pupil of the eye
-    Grob m_eyelid{ { 32, 32 } }; // eye lids
-
-    int m_white_radius = 0;
-    int m_look_radius = 0;
 };
 
 } // namespace AbeEyes

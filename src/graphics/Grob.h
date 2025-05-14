@@ -20,8 +20,8 @@
 // Project includes.
 #include "Resources.h"
 
-// Library includes.
-#include <SDL2/SDL.h>
+// SDL includes.
+#include <SDL2/SDL_rect.h>
 
 namespace AbeEyes {
 
@@ -35,9 +35,11 @@ class Grob
 {
   public:
     Grob();
+    Grob(const SDL_Point& p_origin);
     ~Grob();
 
-    Resources* addSprite(Sprite&& p_sprite);
+    Sprite* addSprite(Sprite&& p_sprite);
+    SpriteList* addSpriteList(SpriteList&& p_spritelist);
 
     void move(const SDL_Point& p_move);
     void setPosition(const SDL_Point& p_pos) { m_pos = p_pos; }
@@ -48,7 +50,13 @@ class Grob
     void renderSpriteList(size_t p_idx) const;
 
   private:
-    SDL_Point m_pos = { 0, 0 }; // position
+    bool hasCustomOrigin() const;
+
+    // Attributes.
+  private:
+    SDL_Point m_pos = { 0 };    // position
+    SDL_Point m_origin = { 0 }; // origin offset shared between resources.
+
     Resources m_resources;
     size_t m_current_sprite_idx = 0;     // index to the current sprite to render
     size_t m_current_spritelist_idx = 0; // index to the current spritelist to render

@@ -21,10 +21,10 @@
 #include <SDL2/SDL_rect.h>
 
 // Forward declarations.
-class SDL_Renderer;
 namespace AbeEyes {
 class Texture;
 }
+class SDL_Renderer;
 
 namespace AbeEyes {
 
@@ -37,14 +37,17 @@ class Sprite
   public:
     Sprite() = delete;
     Sprite(const SDL_Rect& p_rect);
+    Sprite(const SDL_Rect& p_rect, const SDL_Rect& p_dest);
     Sprite(const SDL_Rect& p_rect, const SDL_Rect& p_dest, Texture* p_texture);
     Sprite(const SDL_Rect& p_rect, const SDL_Rect& p_dest, const SDL_Point& p_origin, Texture* p_texture);
     ~Sprite();
 
     SDL_Rect getRect() const { return m_rect; }
 
+    bool isVisible() const { return m_visible; }
     void render(const SDL_Point& p_pos) const;
 
+    void setOrigin(const SDL_Point& p_origin) { m_origin = p_origin; }
     // void setSize(const SDL_Point& p_size);
 
     void setSDLRenderer(SDL_Renderer* p_sdl_renderer) { mp_sdl_renderer = p_sdl_renderer; }
@@ -55,7 +58,7 @@ class Sprite
     SDL_Renderer* mp_sdl_renderer = nullptr;
     SDL_Rect m_rect = { 0 };
     mutable SDL_Rect m_dest = { 0 }; // updated by render()
-    SDL_Point m_origin = { 0, 0 };   // origin offset
+    SDL_Point m_origin = { 0 };      // origin offset
     bool m_visible = true;
 };
 

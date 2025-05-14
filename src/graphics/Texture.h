@@ -17,8 +17,16 @@
 
 #pragma once
 
-// Library includes.
-#include <SDL2/SDL_image.h>
+// SDL includes.
+#include <SDL2/SDL_blendmode.h>
+#include <SDL2/SDL_stdinc.h>
+
+// Forward declarations.
+class SDL_Color;
+class SDL_Rect;
+class SDL_Renderer;
+class SDL_Surface;
+class SDL_Texture;
 
 namespace AbeEyes {
 

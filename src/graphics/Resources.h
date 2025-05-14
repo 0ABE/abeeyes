@@ -20,10 +20,14 @@
 // Project includes.
 #include "Sprite.h"
 #include "SpriteList.h"
-#include "Texture.h"
 
 // Standard library includes.
 #include <map>
+
+// Forward declarations.
+namespace AbeEyes {
+class Texture;
+}
 
 namespace AbeEyes {
 
@@ -42,8 +46,8 @@ class Resources
     Resources();
     ~Resources();
 
-    Resources* addSprite(Sprite&& p_sprite);
-    Resources* addSpriteList(SpriteList&& p_spritelist);
+    Sprite* addSprite(Sprite&& p_sprite);
+    SpriteList* addSpriteList(SpriteList&& p_spritelist);
 
     Sprite* getSprite(size_t p_index);
     const Sprite* getSprite(size_t p_index) const;

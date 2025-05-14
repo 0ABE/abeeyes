@@ -18,7 +18,8 @@
 // Project includes.
 #include "Texture.h"
 
-// Library includes.
+// SDL includes.
+#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_surface.h>
 

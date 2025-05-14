@@ -19,9 +19,6 @@
 #include "Sprite.h"
 #include "Texture.h"
 
-// Library includes.
-#include <SDL2/SDL_render.h>
-
 // Standard library includes.
 #include <iostream>
 
@@ -29,6 +26,13 @@ namespace AbeEyes {
 
 Sprite::Sprite(const SDL_Rect& p_rect)
   : m_rect(p_rect)
+  , m_dest(p_rect)
+{
+}
+
+Sprite::Sprite(const SDL_Rect& p_rect, const SDL_Rect& p_dest)
+  : m_rect(p_rect)
+  , m_dest(p_dest)
 {
 }
 

@@ -17,18 +17,19 @@
 
 // Project includes.
 #include "SpriteList.h"
-#include "Texture.h"
+
+// Standard library includes.
+#include <cassert>
 
 namespace AbeEyes {
-
-SpriteList::SpriteList(const char* p_name)
-  : m_name(p_name)
+SpriteList::SpriteList(const SDL_Point& p_origin, Texture* p_texture)
+  : m_origin(p_origin)
+  , m_texture(p_texture)
 {
 }
 
-SpriteList::SpriteList(const char* p_name, Texture* p_texture)
-  : m_name(p_name)
-  , m_texture(p_texture)
+SpriteList::SpriteList(Texture* p_texture)
+  : m_texture(p_texture)
 {
 }
 
@@ -37,16 +38,22 @@ SpriteList::~SpriteList() = default;
 SpriteList*
 SpriteList::addSprite(Sprite&& p_sprite)
 {
-    m_list.push_back(std::move(p_sprite));
+    if (hasCustomOrigin())
+        p_sprite.setOrigin(m_origin);
+
     if (m_texture)
-        m_list.back().setTexture(m_texture);
+        p_sprite.setTexture(m_texture);
+
+    m_list.push_back(std::move(p_sprite));
 
     return this;
 }
 
-const Sprite&
+const Sprite*
 SpriteList::getNext() const
 {
+    assert(m_current >= 0);
+
     LoopType loop = m_loop_type;
     if (m_loop_type == LoopType::FWD_REV) {
         if (m_loop_dir > 0)
@@ -61,31 +68,31 @@ SpriteList::getNext() const
             if (m_loop_type == LoopType::FWD_REV) {
                 m_loop_dir = -1;
                 m_current = size() - 1;
-                return m_list[m_current];
+                return &m_list[m_current];
             } else {
                 m_current = 0;
             }
         }
-        return m_list[m_current++];
+        return &m_list[m_current++];
     }
 
     if (loop == LoopType::REVERSE) {
         m_loop_dir = -1;
-        if (m_current < 0) {
+        if (m_current <= 1) {
             if (m_loop_type == LoopType::FWD_REV) {
                 m_loop_dir = 1;
                 m_current = 0;
-                return m_list[m_current];
+                return &m_list[m_current];
             } else {
                 m_current = size() - 1;
             }
         }
-        return m_list[m_current--];
+        return &m_list[m_current--];
     }
 
     // LoopType::NONE
     m_current = 0;
-    return m_list[m_current];
+    return &m_list[m_current];
 }
 
 void
@@ -130,7 +137,28 @@ SpriteList::render(const SDL_Point& p_pos) const
     if (!m_visible)
         return;
 
-    getNext().render(p_pos);
+    const Sprite* s = getNext();
+    if (!s->isVisible()) {
+        // If an invisible sprite is found, set the whole list as invisible.
+        m_visible = false;
+        // Avoid rendering.
+        return;
+    }
+    s->render(p_pos);
+}
+
+bool
+SpriteList::hasCustomOrigin() const
+{
+    return (m_origin.x != 0) && (m_origin.y != 0);
+}
+
+void
+SpriteList::setOrigin(const SDL_Point& p_origin)
+{
+    m_origin = p_origin;
+    for (auto& s : m_list)
+        s.setOrigin(p_origin);
 }
 
 } // namespace AbeEyes
