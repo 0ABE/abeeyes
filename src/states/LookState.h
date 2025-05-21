@@ -17,38 +17,45 @@
 
 #pragma once
 
-// SDL library includes.
-#include <SDL2/SDL.h>
+// Project includes.
+#include "../graphics/Grob.h"
+#include "EyeState.h"
+
+// Forward includes.
+namespace AbeEyes {
+class Eyeball;
+class MouseAttrs;
+}
 
 namespace AbeEyes {
 
 /**
- * @brief A data structure to hold mouse coordinates and button clicks.
+ * @brief Represents the looking eye state.
  * @date May-2025
  */
-typedef struct MouseAttrs
+class LookState : public EyeState
 {
-    // Mouse position in the desktop/screen coordinate system.
-    SDL_Point pos_wrt_screen = { 0 };
-    // Mouse position in the application/window coordinate system.
-    SDL_Point pos_wrt_window = { 0 };
-    // Left button is down.
-    bool left_btn_down = false;
-    // Middle button is down.
-    bool middle_btn_down = false;
-    // Right button is down.
-    bool right_btn_down = false;
+  public:
+    LookState();
+    ~LookState();
 
-    bool hasMoved(const MouseAttrs& p_prev)
-    {
-        return ((p_prev.pos_wrt_screen.x != pos_wrt_screen.x) && (p_prev.pos_wrt_screen.y != pos_wrt_screen.y));
-    }
+    // Interface.
+    void render() const;
 
-    bool isClicked()
-    {
-        return left_btn_down || middle_btn_down || right_btn_down;
-    }
+    void setPosition(const SDL_Point& p_pos);
+    void setRadii(int p_white_rad, int p_pupil_rad);
+    void update(const MouseAttrs& p_mouse);
 
-} MouseAttrs;
+  private:
+    void setLookPos(const SDL_Point& p_pos);
+
+    // Attributes
+  private:
+    Grob m_white{ { 32, 32 } }; // white of the eye
+    Grob m_pupil;               // pupil of the eye
+
+    int m_white_rad = 0;
+    int m_pupil_rad = 0;
+};
 
 } // namespace AbeEyes

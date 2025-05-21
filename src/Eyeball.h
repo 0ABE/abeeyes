@@ -18,9 +18,14 @@
 #pragma once
 
 // Project includes.
-#include "graphics/Grob.h"
+#include "states/BlinkState.h"
+#include "states/EyeState.h"
+#include "states/LookState.h"
 
-// Forward declarations.
+// Standard library includes.
+#include <stack>
+
+// Forward includes.
 namespace AbeEyes {
 class MouseAttrs;
 }
@@ -39,7 +44,8 @@ class Eyeball
     Eyeball(const SDL_Point& p_pos, int p_white_rad, int p_look_rad);
     ~Eyeball();
 
-    void update(const MouseAttrs& p_mouse);
+    void handleClick();
+    void lookAt(const MouseAttrs& p_mouse);
     void render() const;
 
   private:
@@ -47,12 +53,10 @@ class Eyeball
 
     // Attributes
   private:
-    Grob m_white{ { 32, 32 } };  // white of the eye
-    Grob m_pupil;                // pupil of the eye
-    Grob m_eyelid{ { 32, 32 } }; // eye lids
-
-    int m_white_radius = 0;
-    int m_look_radius = 0;
+    mutable std::stack<EyeState*> m_state; // modified by handleClick() and render()
+    LookState m_look_state;
+    BlinkState m_blink_state;
+    // SleepState m_sleep_state;
 };
 
 } // namespace AbeEyes

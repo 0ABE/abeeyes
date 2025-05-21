@@ -95,10 +95,10 @@ SpriteList::getNext() const
     return &m_list[m_current];
 }
 
-void
-SpriteList::setLoopType(LoopType p_loop_type)
+SpriteList*
+SpriteList::setLoopType(LoopType p_type)
 {
-    m_loop_type = p_loop_type;
+    m_loop_type = p_type;
     switch (m_loop_type) {
         case LoopType::NONE:
             m_loop_dir = 0;
@@ -112,6 +112,30 @@ SpriteList::setLoopType(LoopType p_loop_type)
             m_loop_dir = -1;
             break;
     }
+    return this;
+}
+
+SpriteList*
+SpriteList::setLoopLimit(size_t p_limit)
+{
+    m_loop_limit = p_limit;
+    return this;
+}
+
+void
+SpriteList::resetLoop()
+{
+    m_sprite_count = 0;
+    m_loop_count = 0;
+}
+
+bool
+SpriteList::isRenderLoopDone() const
+{
+    if (m_loop_limit > 0)
+        return m_loop_count >= m_loop_limit;
+
+    return false;
 }
 
 // void
@@ -137,20 +161,42 @@ SpriteList::render(const SDL_Point& p_pos) const
     if (!m_visible)
         return;
 
-    const Sprite* s = getNext();
-    if (!s->isVisible()) {
-        // If an invisible sprite is found, set the whole list as invisible.
-        m_visible = false;
-        // Avoid rendering.
-        return;
+    if ((m_loop_limit == 0) || (m_loop_count < m_loop_limit)) {
+        // If there is no looping limit or the limit hasn't
+        // been reached, then render the next sprite.
+        getNext()->render(p_pos);
+        incrementCounts();
+    } else {
+        // Render the current sprite.
+        m_list[m_current].render(p_pos);
     }
-    s->render(p_pos);
 }
 
 bool
 SpriteList::hasCustomOrigin() const
 {
     return (m_origin.x != 0) && (m_origin.y != 0);
+}
+
+/**
+ * @brief Increment the loop count based on the frame count.
+ * @date May-2025
+ */
+void
+SpriteList::incrementCounts() const
+{
+    if (m_loop_limit == 0)
+        // Unlimited looping doesn't need a count.
+        return;
+
+    // Advance the frame count.
+    m_sprite_count++;
+    if (m_sprite_count == size()) {
+        // Roll over the frame count into the loop count...
+        m_loop_count++;
+        // and reset the frame count for the next loop.
+        m_sprite_count = 0;
+    }
 }
 
 void

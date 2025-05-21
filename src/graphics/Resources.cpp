@@ -120,6 +120,13 @@ Resources::getSpriteList(size_t p_index) const
 //     return true;
 // }
 
+void
+Resources::reset()
+{
+    for (auto& ss : m_spritelists)
+        ss.resetLoop();
+}
+
 Texture*
 Resources::getTexture(const char* p_name)
 {

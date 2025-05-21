@@ -17,38 +17,38 @@
 
 #pragma once
 
-// SDL library includes.
-#include <SDL2/SDL.h>
+// Project includes.
+#include "../graphics/Grob.h"
+#include "EyeState.h"
+
+// Forward includes.
+namespace AbeEyes {
+class Eyeball;
+class MouseAttrs;
+}
 
 namespace AbeEyes {
 
 /**
- * @brief A data structure to hold mouse coordinates and button clicks.
+ * @brief Represents the blinking eye state.
  * @date May-2025
  */
-typedef struct MouseAttrs
+class BlinkState : public EyeState
 {
-    // Mouse position in the desktop/screen coordinate system.
-    SDL_Point pos_wrt_screen = { 0 };
-    // Mouse position in the application/window coordinate system.
-    SDL_Point pos_wrt_window = { 0 };
-    // Left button is down.
-    bool left_btn_down = false;
-    // Middle button is down.
-    bool middle_btn_down = false;
-    // Right button is down.
-    bool right_btn_down = false;
+  public:
+    BlinkState();
+    ~BlinkState();
 
-    bool hasMoved(const MouseAttrs& p_prev)
-    {
-        return ((p_prev.pos_wrt_screen.x != pos_wrt_screen.x) && (p_prev.pos_wrt_screen.y != pos_wrt_screen.y));
-    }
+    // Interface.
+    void render() const;
+    void reset();
 
-    bool isClicked()
-    {
-        return left_btn_down || middle_btn_down || right_btn_down;
-    }
+    bool isRenderLoopDone() const;
+    void setPosition(const SDL_Point& p_pos);
 
-} MouseAttrs;
+    // Attributes
+  private:
+    Grob m_eyelid{ { 32, 32 } }; // eye lids
+};
 
 } // namespace AbeEyes

@@ -24,22 +24,15 @@
 #include "Eyeball.h"
 #include "MouseAttrs.h"
 #include "graphics/AlignTypes.h"
-#include "graphics/Grob.h"
-#include "graphics/LoopType.h"
-#include "graphics/Resources.h"
-#include "graphics/Sprite.h"
-#include "graphics/SpriteList.h"
 #include "graphics/Texture.h"
 
 // SDL includes.
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_video.h>
 
 // Standard library includes.
 #include <iostream>
 #include <map>
-#include <memory>
 
 // Globals.
 SDL_Rect g_win_rect{ 0, 0, 128, 64 };
@@ -58,6 +51,9 @@ std::map<std::string, AbeEyes::Eyeball> g_eyeball_layer;
 // Shut down SDL and free resources.
 void
 close();
+// Detect if a click event occurred.
+bool
+detectClickEvent();
 // Init resources used by the App.
 bool
 initResources();
@@ -151,6 +147,14 @@ close()
 }
 
 bool
+detectClickEvent()
+{
+    AbeEyes::MouseAttrs prev_mouse = g_mouse;
+    g_system.updateMouse(gp_sdl_window, &g_mouse);
+    return !prev_mouse.isClicked() && g_mouse.isClicked();
+}
+
+bool
 initResources()
 {
     // Load the spritesheet as a texture for clipping into Sprites.
@@ -232,11 +236,12 @@ initSDL(const char* p_win_title)
 void
 update()
 {
-    // Get the current mouse/cursor position and button presses...
-    g_system.updateMouse(gp_sdl_window, &g_mouse);
-    // and use it to update where the eyeballs look.
-    for (auto& it : g_eyeball_layer)
-        it.second.update(g_mouse);
+    const bool click_event = detectClickEvent();
+    for (auto& it : g_eyeball_layer) {
+        if (click_event)
+            it.second.handleClick();
+        it.second.lookAt(g_mouse);
+    }
 }
 
 void

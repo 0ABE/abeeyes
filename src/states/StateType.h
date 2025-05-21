@@ -17,38 +17,17 @@
 
 #pragma once
 
-// SDL library includes.
-#include <SDL2/SDL.h>
-
 namespace AbeEyes {
 
 /**
- * @brief A data structure to hold mouse coordinates and button clicks.
+ * @brief Different states of the eye.
  * @date May-2025
  */
-typedef struct MouseAttrs
+enum class StateType
 {
-    // Mouse position in the desktop/screen coordinate system.
-    SDL_Point pos_wrt_screen = { 0 };
-    // Mouse position in the application/window coordinate system.
-    SDL_Point pos_wrt_window = { 0 };
-    // Left button is down.
-    bool left_btn_down = false;
-    // Middle button is down.
-    bool middle_btn_down = false;
-    // Right button is down.
-    bool right_btn_down = false;
-
-    bool hasMoved(const MouseAttrs& p_prev)
-    {
-        return ((p_prev.pos_wrt_screen.x != pos_wrt_screen.x) && (p_prev.pos_wrt_screen.y != pos_wrt_screen.y));
-    }
-
-    bool isClicked()
-    {
-        return left_btn_down || middle_btn_down || right_btn_down;
-    }
-
-} MouseAttrs;
+    LOOKING,
+    SLEEPING,
+    BLINKING
+};
 
 } // namespace AbeEyes

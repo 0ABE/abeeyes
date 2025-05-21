@@ -48,6 +48,9 @@ class Grob
     void render() const;
     void renderSprite(size_t p_idx) const;
     void renderSpriteList(size_t p_idx) const;
+    bool isSpriteListDone(size_t p_idx = 0) const;
+
+    void reset();
 
   private:
     bool hasCustomOrigin() const;

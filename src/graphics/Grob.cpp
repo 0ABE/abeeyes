@@ -78,6 +78,21 @@ Grob::renderSpriteList(size_t p_idx) const
 }
 
 bool
+Grob::isSpriteListDone(size_t p_idx) const
+{
+    if (m_resources.getSpriteListSize() == 0)
+        return false;
+
+    return m_resources.getSpriteList(p_idx)->isRenderLoopDone();
+}
+
+void
+Grob::reset()
+{
+    m_resources.reset();
+}
+
+bool
 Grob::hasCustomOrigin() const
 {
     return (m_origin.x != 0) && (m_origin.y != 0);

@@ -25,42 +25,14 @@
 
 namespace AbeEyes {
 
-Eyeball::Eyeball()
-{
-    Texture* spritesheet = Resources::getTexture();
-    SDL_Rect dest_rect{ 0, 0, 64, 64 };
-
-    // Add the white of the eye (and background.)
-    m_white.addSprite({ { 0, 0, 32, 32 }, dest_rect, spritesheet });
-    m_white.setPosition({ 0, 0 });
-
-    // Add the pupil.
-    m_pupil.addSprite({ { 32, 0, 7, 9 }, { 0, 0, 14, 18 }, { 7, 9 }, spritesheet });
-    m_pupil.setPosition({ 0, 0 });
-
-    // Add the blinking eyelids.
-    SpriteList* blink = m_eyelid.addSpriteList({ spritesheet });
-    int x = 64;
-    auto nextX = [&]() { return x += 32; };
-    blink->addSprite({ { x, 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->setLoopType(AbeEyes::LoopType::FWD_REV);
-}
+Eyeball::Eyeball() = default;
 
 Eyeball::Eyeball(const SDL_Point& p_pos, int p_white_rad, int p_look_rad)
   : Eyeball()
 {
-    m_white.setPosition(p_pos);
-    m_pupil.setPosition(p_pos);
-    m_eyelid.setPosition(p_pos);
-    m_white_radius = p_white_rad;
-    m_look_radius = p_look_rad;
+    m_look_state.setPosition(p_pos);
+    m_look_state.setRadii(p_white_rad, p_look_rad);
+    m_blink_state.setPosition(p_pos);
 }
 
 Eyeball::~Eyeball() = default;
@@ -68,63 +40,32 @@ Eyeball::~Eyeball() = default;
 void
 Eyeball::render() const
 {
-    m_white.render();
-    m_pupil.render();
-    m_eyelid.render();
+    m_look_state.render();
+
+    if (m_state.empty())
+        return;
+
+    EyeState* state = m_state.top();
+    if (state->isRenderLoopDone()) {
+        state->reset();
+        m_state.pop();
+    } else {
+        state->render();
+    }
 }
 
 void
-Eyeball::setLookPos(const SDL_Point& p_pos)
+Eyeball::handleClick()
 {
-    m_pupil.setPosition(p_pos);
+    if (m_state.empty())
+        m_state.push(&m_blink_state);
 }
 
 /// @param p_mouse mouse wrt window.
 void
-Eyeball::update(const MouseAttrs& p_mouse)
+Eyeball::lookAt(const MouseAttrs& p_mouse)
 {
-    // X & Y deltas.
-    const SDL_Point white_pos = m_white.getPosition();
-    const int x_diff = p_mouse.pos_wrt_window.x - white_pos.x;
-    const int y_diff = p_mouse.pos_wrt_window.y - white_pos.y;
-    // Protect against zeros.
-    if ((x_diff == 0) || (y_diff == 0))
-        return;
-
-    const int mouse_dist = (int)sqrt((x_diff * x_diff) + (y_diff * y_diff));
-    const double slope = (x_diff == 0 || y_diff == 0 ? 0 : (double)y_diff / x_diff);
-    const double angle = atan(slope);
-    const double cos_angle = (x_diff == 0 ? 0. : cos(angle));
-    const double sin_angle = (y_diff == 0 ? 0. : sin(angle));
-    const double sin_n_angle = (y_diff == 0 ? 0. : sin(-angle));
-    const int max_look_rad = m_white_radius - m_look_radius;
-
-    if (mouse_dist < max_look_rad) {
-        setLookPos(p_mouse.pos_wrt_window);
-    } else {
-        int x, y;
-        // bottom right
-        if (x_diff > 0 && y_diff > 0) {
-            x = white_pos.x + (max_look_rad * cos_angle);
-            y = white_pos.y + (max_look_rad * sin_angle);
-        }
-        // top right
-        else if (x_diff > 0 && y_diff < 0) {
-            x = white_pos.x + (max_look_rad * cos_angle);
-            y = white_pos.y - (max_look_rad * sin_n_angle);
-        }
-        // top left
-        else if (x_diff < 0 && y_diff < 0) {
-            x = white_pos.x - (max_look_rad * cos_angle);
-            y = white_pos.y - (max_look_rad * sin_angle);
-        }
-        // bottom left
-        else if (x_diff < 0 && y_diff > 0) {
-            x = white_pos.x - (max_look_rad * cos_angle);
-            y = white_pos.y + (max_look_rad * sin_n_angle);
-        }
-        setLookPos({ x, y });
-    }
+    m_look_state.update(p_mouse);
 }
 
 } // namespace AbeEyes

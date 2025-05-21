@@ -56,6 +56,9 @@ class Resources
 
     SpriteList* getSpriteList(size_t p_index);
     const SpriteList* getSpriteList(size_t p_index) const;
+    size_t getSpriteListSize() const { return m_spritelists.size(); }
+
+    void reset();
 
     // bool getSpriteLists(SpriteLists* p_spritelists);
 

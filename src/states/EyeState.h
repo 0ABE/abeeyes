@@ -21,6 +21,7 @@
 
 // Forward includes.
 namespace AbeEyes {
+class Eyeball;
 class MouseAttrs;
 }
 
@@ -36,7 +37,10 @@ class EyeState
     EyeState();
     ~EyeState();
 
-    virtual void handleInput(const MouseAttrs& p_mouse);
+    virtual void render() const;
+    virtual void reset();
+
+    virtual bool isRenderLoopDone() const;
 
     // Attributes
   private:

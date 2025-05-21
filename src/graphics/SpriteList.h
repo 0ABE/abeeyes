@@ -50,7 +50,11 @@ class SpriteList
     // void setFramerate(int p_rate) { m_framerate = p_rate; }
     void setTexture(const Texture* p_texture) { m_texture = const_cast<Texture*>(p_texture); }
 
-    void setLoopType(LoopType p_loop_type);
+    SpriteList* setLoopType(LoopType p_type);
+    SpriteList* setLoopLimit(size_t p_limit);
+    void resetLoop();
+
+    bool isRenderLoopDone() const;
 
     // void setSize(const SDL_Point& p_size);
     SDL_Rect getRect() const;
@@ -64,14 +68,23 @@ class SpriteList
   private:
     const Sprite* getNext() const;
     bool hasCustomOrigin() const;
+    void incrementCounts() const; // marked const to be called from render()
 
     // Attributes.
   private:
     Texture* m_texture = nullptr;
     // int m_framerate = 0;
 
+    // The index for the current sprite to be rendered.
     mutable size_t m_current = 0;
+    // Which direction should the next sprite come from in the list.
     mutable int m_loop_dir = 1;
+    // Stop after looping this many times.
+    size_t m_loop_limit = 0; // 0 means no limit
+    // Keep track of the number of loops played.
+    mutable size_t m_loop_count = 0;
+    // Keep track of the number of sprites rendered.
+    mutable size_t m_sprite_count = 0;
 
     Sprites m_list = {};
     LoopType m_loop_type = LoopType::FORWARD;
