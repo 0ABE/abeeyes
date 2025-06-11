@@ -18,8 +18,9 @@
 cmake_minimum_required(VERSION 3.22.1)
 message(STATUS "Using CMake version " ${CMAKE_VERSION})
 
-project("AbeEyes" VERSION 0.1.250610)
+include(FetchContent)
 
+project("AbeEyes" VERSION 0.1.250610)
 configure_file(
   "${CMAKE_SOURCE_DIR}/AbeEyesConfig.h.in" 
   "${CMAKE_BINARY_DIR}/AbeEyesConfig.h"
@@ -90,9 +91,17 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 
-
 # Add source code to this project's executable.
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_CODE})
+
+# Fetch the AbeArgs library.
+FetchContent_Declare(
+  AbeArgs
+  GIT_REPOSITORY https://github.com/0ABE/abeargs.git
+  GIT_TAG 6b482b2de8ecb343afaaed410824b06802aa8d32
+  SOURCE_SUBDIR lib
+)
+FetchContent_MakeAvailable(AbeArgs)
 
 # Relies on pkg-config to find SDL2 and SDL2IMAGE.
 # Seems easier than a special cross platform cmake/module script right now.
@@ -119,7 +128,7 @@ target_link_directories(${CMAKE_PROJECT_NAME} PUBLIC
                         ${SDL2_LIBRARY_DIRS})
 
 # Link the following libraries into the target executable.
-target_link_libraries(${CMAKE_PROJECT_NAME} SDL2 SDL2_image)
+target_link_libraries(${CMAKE_PROJECT_NAME} AbeArgs SDL2 SDL2_image)
 
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
 # Link the CoreGraphics and Foundation libs for macOS.

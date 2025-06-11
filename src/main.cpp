@@ -26,6 +26,9 @@
 #include "graphics/AlignTypes.h"
 #include "graphics/Texture.h"
 
+// AbeArgs includes.
+#include <abeargs/abeargs.h>
+
 // SDL includes.
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
