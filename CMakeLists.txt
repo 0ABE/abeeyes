@@ -18,7 +18,7 @@
 cmake_minimum_required(VERSION 3.22.1)
 message(STATUS "Using CMake version " ${CMAKE_VERSION})
 
-project("AbeEyes" VERSION 0.1.250419)
+project("AbeEyes" VERSION 0.1.250610)
 
 configure_file(
   "${CMAKE_SOURCE_DIR}/AbeEyesConfig.h.in" 

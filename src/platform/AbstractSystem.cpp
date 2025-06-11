@@ -113,4 +113,11 @@ AbstractSystem::updateWindowRect(HAlign p_h, VAlign p_v, SDL_Rect& p_win_rect) c
     }
 }
 
+void
+AbstractSystem::updateWindowRect(int p_h, int p_v, SDL_Rect& p_win_rect) const
+{
+    p_win_rect.x += p_h;
+    p_win_rect.y += p_v;
+}
+
 } // namespace AbeEyes

@@ -50,6 +50,7 @@ class Grob
     void renderSpriteList(size_t p_idx) const;
     bool isSpriteListDone(size_t p_idx = 0) const;
 
+    void setCurrentSprite(size_t p_idx);
     void reset();
 
   private:

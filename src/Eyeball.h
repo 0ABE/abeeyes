@@ -41,12 +41,14 @@ class Eyeball
 {
   public:
     Eyeball();
-    Eyeball(const SDL_Point& p_pos, int p_white_rad, int p_look_rad);
+    Eyeball(const SDL_Point& p_pos);
     ~Eyeball();
 
     void handleClick();
     void lookAt(const MouseAttrs& p_mouse);
     void render() const;
+
+    void initPupilSizes(const SDL_Rect* p_rect);
 
   private:
     void setLookPos(const SDL_Point& p_pos);

@@ -27,11 +27,10 @@ namespace AbeEyes {
 
 Eyeball::Eyeball() = default;
 
-Eyeball::Eyeball(const SDL_Point& p_pos, int p_white_rad, int p_look_rad)
+Eyeball::Eyeball(const SDL_Point& p_pos)
   : Eyeball()
 {
     m_look_state.setPosition(p_pos);
-    m_look_state.setRadii(p_white_rad, p_look_rad);
     m_blink_state.setPosition(p_pos);
 }
 
@@ -52,6 +51,12 @@ Eyeball::render() const
     } else {
         state->render();
     }
+}
+
+void
+Eyeball::initPupilSizes(const SDL_Rect* p_rect)
+{
+    m_look_state.initScreenLimits(p_rect);
 }
 
 void

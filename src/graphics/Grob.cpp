@@ -18,6 +18,9 @@
 // Project includes.
 #include "Grob.h"
 
+// Standard library includes.
+#include <cassert>
+
 namespace AbeEyes {
 
 Grob::Grob() = default;
@@ -80,10 +83,17 @@ Grob::renderSpriteList(size_t p_idx) const
 bool
 Grob::isSpriteListDone(size_t p_idx) const
 {
-    if (m_resources.getSpriteListSize() == 0)
+    if (m_resources.getSpriteListCount() == 0)
         return false;
 
     return m_resources.getSpriteList(p_idx)->isRenderLoopDone();
+}
+
+void
+Grob::setCurrentSprite(size_t p_idx)
+{
+    assert(p_idx < m_resources.getSpriteCount());
+    m_current_sprite_idx = p_idx;
 }
 
 void

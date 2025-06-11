@@ -28,7 +28,7 @@ enum class LoopType
     NONE,
     FORWARD,
     REVERSE,
-    FWD_REV
+    PING_PONG
 };
 
 } // namespace AbeEyes

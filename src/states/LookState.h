@@ -36,26 +36,53 @@ namespace AbeEyes {
 class LookState : public EyeState
 {
   public:
+    enum class PupilSize
+    {
+        SMALL,
+        MEDIUM,
+        LARGE,
+        XLARGE
+    };
+
+  private:
+    typedef struct ScreenLimits
+    {
+        size_t m_small = 0;
+        size_t m_medium = 0;
+        size_t m_large = 0;
+        size_t m_xlarge = 0;
+
+        bool hasLimits()
+        {
+            return m_small > 0 && m_medium > 0 && m_large > 0 && m_xlarge > 0;
+        }
+    } ScreenLimits;
+
+  public:
     LookState();
     ~LookState();
 
     // Interface.
     void render() const;
 
+    void initScreenLimits(const SDL_Rect* p_rect);
+
     void setPosition(const SDL_Point& p_pos);
-    void setRadii(int p_white_rad, int p_pupil_rad);
     void update(const MouseAttrs& p_mouse);
 
   private:
     void setLookPos(const SDL_Point& p_pos);
+    void setPupilSize(PupilSize p_size);
 
     // Attributes
   private:
     Grob m_white{ { 32, 32 } }; // white of the eye
     Grob m_pupil;               // pupil of the eye
 
-    int m_white_rad = 0;
-    int m_pupil_rad = 0;
+    size_t m_white_rad = 0;
+    size_t m_pupil_rad = 0;
+
+    ScreenLimits m_limits;
 };
 
 } // namespace AbeEyes

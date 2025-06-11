@@ -36,8 +36,8 @@ BlinkState::BlinkState()
       ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
       ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
       ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->setLoopType(AbeEyes::LoopType::FWD_REV)
-      ->setLoopLimit(2);
+      ->setLoopType(AbeEyes::LoopType::PING_PONG)
+      ->setLoopLimit(1);
 }
 
 BlinkState::~BlinkState() = default;

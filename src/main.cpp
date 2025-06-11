@@ -35,6 +35,7 @@
 #include <map>
 
 // Globals.
+const char* g_app_name = "AbeEyes";
 SDL_Rect g_win_rect{ 0, 0, 128, 64 };
 #if defined(__APPLE__)
 AbeEyes::MacSystem g_system;
@@ -51,6 +52,9 @@ std::map<std::string, AbeEyes::Eyeball> g_eyeball_layer;
 // Shut down SDL and free resources.
 void
 close();
+// An info dialog.
+void
+showAbout();
 // Detect if a click event occurred.
 bool
 detectClickEvent();
@@ -59,7 +63,7 @@ bool
 initResources();
 // Start up SDL and create a window.
 bool
-initSDL(const char*);
+initSDL();
 // The main loop, where the action happens.
 void
 mainLoop();
@@ -79,8 +83,7 @@ main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    const char* win_title = "AbeEyes";
-    if (!initSDL(win_title))
+    if (!initSDL())
         return EXIT_FAILURE;
 
     if (!initResources())
@@ -104,21 +107,41 @@ mainLoop()
                 running = false;
                 break;
             } else if (e.type == SDL_KEYDOWN) {
+                const bool with_lshift = e.key.keysym.mod & KMOD_LSHIFT;
+                const bool with_rshift = e.key.keysym.mod & KMOD_RSHIFT;
+                // Left shift moves the window by 1px.
+                // Right shift moves the window by 10px.
+                int d_xy = (with_lshift ? 1 : (with_rshift ? 10 : 0));
                 switch (e.key.keysym.sym) {
+                    case SDLK_a:
+                        showAbout();
+                        break;
                     case SDLK_q:
                         running = false;
                         break;
                     case SDLK_UP:
-                        g_system.updateWindowRect(AbeEyes::HAlign::NONE, AbeEyes::VAlign::TOP, g_win_rect);
+                        if (d_xy > 0)
+                            g_system.updateWindowRect(0, -d_xy, g_win_rect);
+                        else
+                            g_system.updateWindowRect(AbeEyes::HAlign::NONE, AbeEyes::VAlign::TOP, g_win_rect);
                         break;
                     case SDLK_DOWN:
-                        g_system.updateWindowRect(AbeEyes::HAlign::NONE, AbeEyes::VAlign::BOTTOM, g_win_rect);
+                        if (d_xy > 0)
+                            g_system.updateWindowRect(0, d_xy, g_win_rect);
+                        else
+                            g_system.updateWindowRect(AbeEyes::HAlign::NONE, AbeEyes::VAlign::BOTTOM, g_win_rect);
                         break;
                     case SDLK_LEFT:
-                        g_system.updateWindowRect(AbeEyes::HAlign::LEFT, AbeEyes::VAlign::NONE, g_win_rect);
+                        if (d_xy > 0)
+                            g_system.updateWindowRect(-d_xy, 0, g_win_rect);
+                        else
+                            g_system.updateWindowRect(AbeEyes::HAlign::LEFT, AbeEyes::VAlign::NONE, g_win_rect);
                         break;
                     case SDLK_RIGHT:
-                        g_system.updateWindowRect(AbeEyes::HAlign::RIGHT, AbeEyes::VAlign::NONE, g_win_rect);
+                        if (d_xy > 0)
+                            g_system.updateWindowRect(d_xy, 0, g_win_rect);
+                        else
+                            g_system.updateWindowRect(AbeEyes::HAlign::RIGHT, AbeEyes::VAlign::NONE, g_win_rect);
                         break;
                 }
                 SDL_SetWindowPosition(gp_sdl_window, g_win_rect.x, g_win_rect.y);
@@ -130,8 +153,7 @@ mainLoop()
             update();
             render();
         }
-    }
-    // Exiting the main loop.
+    } // end while running
 }
 
 void
@@ -144,6 +166,14 @@ close()
     // Quit SDL subsystems.
     IMG_Quit();
     SDL_Quit();
+}
+
+void
+showAbout()
+{
+    const std::string title = "About " + std::string{ g_app_name };
+    const char* message = "Googly eyes for your desktop.\n\nCopyright (c) 2025, Abe Mishler.";
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, title.c_str(), message, nullptr);
 }
 
 bool
@@ -166,8 +196,12 @@ initResources()
 
     // Create the eyes.
     AbeEyes::Eyeball
-      left_eye({ 32, 32 }, 32, 12),
-      right_eye({ 96, 32 }, 32, 12);
+      left_eye({ 32, 32 }),
+      right_eye({ 96, 32 });
+
+    // Enable pupil resizing based on screen dimensions and mouse distance.
+    left_eye.initPupilSizes(g_system.getDesktopArea());
+    right_eye.initPupilSizes(g_system.getDesktopArea());
 
     // Copy the eyes to their layer for rendering.
     g_eyeball_layer["left_eye"] = left_eye;
@@ -177,7 +211,7 @@ initResources()
 }
 
 bool
-initSDL(const char* p_win_title)
+initSDL()
 {
     // Init SDL subsystems.
     const Uint32 sdl_flags = SDL_INIT_VIDEO | SDL_INIT_EVENTS;
@@ -193,7 +227,7 @@ initSDL(const char* p_win_title)
     // Make a borderless window and place it in the lower right corner.
     const Uint32 win_flags = /*| SDL_WINDOW_UTILITY */ SDL_WINDOW_BORDERLESS;
     g_system.updateWindowRect(AbeEyes::HAlign::RIGHT, AbeEyes::VAlign::BOTTOM, g_win_rect);
-    gp_sdl_window = SDL_CreateWindow(p_win_title, g_win_rect.x, g_win_rect.y, g_win_rect.w, g_win_rect.h, win_flags);
+    gp_sdl_window = SDL_CreateWindow(g_app_name, g_win_rect.x, g_win_rect.y, g_win_rect.w, g_win_rect.h, win_flags);
     if (!gp_sdl_window) {
         std::cerr << "Failure to create SDL Window: " << SDL_GetError() << "\n";
         close();

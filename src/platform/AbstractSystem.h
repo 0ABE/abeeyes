@@ -42,6 +42,7 @@ class AbstractSystem
 
     virtual bool updateMouse(SDL_Window* p_sdl_window, MouseAttrs* p_mouse) const;
     virtual void updateWindowRect(HAlign p_h, VAlign p_v, SDL_Rect& p_win_rect) const;
+    virtual void updateWindowRect(int p_h, int p_v, SDL_Rect& p_win_rect) const;
 
     virtual bool error() const { return !m_error_msg.empty(); }
     virtual const std::string* getErrorMsg() const { return &m_error_msg; }

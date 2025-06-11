@@ -55,7 +55,7 @@ SpriteList::getNext() const
     assert(m_current >= 0);
 
     LoopType loop = m_loop_type;
-    if (m_loop_type == LoopType::FWD_REV) {
+    if (m_loop_type == LoopType::PING_PONG) {
         if (m_loop_dir > 0)
             loop = LoopType::FORWARD;
         else if (m_loop_dir < 0)
@@ -65,7 +65,7 @@ SpriteList::getNext() const
     if (loop == LoopType::FORWARD) {
         m_loop_dir = 1;
         if (m_current >= size()) {
-            if (m_loop_type == LoopType::FWD_REV) {
+            if (m_loop_type == LoopType::PING_PONG) {
                 m_loop_dir = -1;
                 m_current = size() - 1;
                 return &m_list[m_current];
@@ -79,7 +79,7 @@ SpriteList::getNext() const
     if (loop == LoopType::REVERSE) {
         m_loop_dir = -1;
         if (m_current <= 1) {
-            if (m_loop_type == LoopType::FWD_REV) {
+            if (m_loop_type == LoopType::PING_PONG) {
                 m_loop_dir = 1;
                 m_current = 0;
                 return &m_list[m_current];
@@ -105,7 +105,7 @@ SpriteList::setLoopType(LoopType p_type)
             break;
         case LoopType::FORWARD:
             [[fallthrough]];
-        case LoopType::FWD_REV:
+        case LoopType::PING_PONG:
             m_loop_dir = 1;
             break;
         case LoopType::REVERSE:
@@ -118,7 +118,10 @@ SpriteList::setLoopType(LoopType p_type)
 SpriteList*
 SpriteList::setLoopLimit(size_t p_limit)
 {
-    m_loop_limit = p_limit;
+    if (m_loop_type == LoopType::PING_PONG)
+        m_loop_limit = p_limit * 2;
+    else
+        m_loop_limit = p_limit;
     return this;
 }
 

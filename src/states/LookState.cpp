@@ -29,10 +29,17 @@ LookState::LookState()
     // Add the white of the eye (and background.)
     m_white.addSprite({ { 0, 0, 32, 32 }, dest_rect, spritesheet });
     m_white.setPosition({ 0, 0 });
+    m_white_rad = 32;
 
-    // Add the pupil.
-    m_pupil.addSprite({ { 32, 0, 7, 9 }, { 0, 0, 14, 18 }, { 7, 9 }, spritesheet });
+    // Add the pupils (S/M/L/XL)
+    m_pupil.addSprite({ { 32, 0, 5, 5 }, { 0, 0, 10, 10 }, { 5, 5 }, spritesheet });
+    m_pupil.addSprite({ { 48, 0, 8, 8 }, { 0, 0, 16, 16 }, { 8, 8 }, spritesheet });
+    m_pupil.addSprite({ { 32, 16, 12, 12 }, { 0, 0, 24, 24 }, { 12, 12 }, spritesheet });
+    m_pupil.addSprite({ { 48, 16, 16, 16 }, { 0, 0, 32, 32 }, { 16, 16 }, spritesheet });
     m_pupil.setPosition({ 0, 0 });
+
+    // Set a medium pupil by default.
+    setPupilSize(PupilSize::MEDIUM);
 }
 
 LookState::~LookState() = default;
@@ -45,17 +52,44 @@ LookState::render() const
 }
 
 void
+LookState::initScreenLimits(const SDL_Rect* p_rect)
+{
+    long diag = sqrt(std::pow(p_rect->h, 2) + std::pow(p_rect->w, 2));
+    long inc = diag / 4;
+    m_limits.m_xlarge = 64;
+    m_limits.m_large = inc;
+    m_limits.m_medium = inc * 3;
+    m_limits.m_small = inc * 4;
+}
+
+void
+LookState::setPupilSize(PupilSize p_size)
+{
+    switch (p_size) {
+        case PupilSize::SMALL:
+            m_pupil.setCurrentSprite(0);
+            m_pupil_rad = 6;
+            break;
+        case PupilSize::MEDIUM:
+            m_pupil.setCurrentSprite(1);
+            m_pupil_rad = 10;
+            break;
+        case PupilSize::LARGE:
+            m_pupil.setCurrentSprite(2);
+            m_pupil_rad = 14;
+            break;
+        case PupilSize::XLARGE:
+            m_pupil.setCurrentSprite(3);
+            m_pupil_rad = 18;
+            break;
+    }
+}
+
+void
 LookState::setPosition(const SDL_Point& p_pos)
 {
     m_white.setPosition(p_pos);
     m_pupil.setPosition(p_pos);
-}
-
-void
-LookState::setRadii(int p_white_rad, int p_pupil_rad)
-{
-    m_white_rad = p_white_rad;
-    m_pupil_rad = p_pupil_rad;
 }
 
 /// @param p_mouse mouse wrt window.
@@ -76,8 +110,23 @@ LookState::update(const MouseAttrs& p_mouse)
     const double cos_angle = (x_diff == 0 ? 0. : cos(angle));
     const double sin_angle = (y_diff == 0 ? 0. : sin(angle));
     const double sin_n_angle = (y_diff == 0 ? 0. : sin(-angle));
+
+    if (m_limits.hasLimits()) {
+        // Update the pupil size based on mouse distance.
+        if (mouse_dist < m_limits.m_xlarge)
+            setPupilSize(PupilSize::XLARGE);
+        else if (mouse_dist < m_limits.m_large)
+            setPupilSize(PupilSize::LARGE);
+        else if (mouse_dist < m_limits.m_medium)
+            setPupilSize(PupilSize::MEDIUM);
+        else
+            setPupilSize(PupilSize::SMALL);
+    }
+
+    // Calculate the max deviation of the pupil based on its size.
     const int max_look_rad = m_white_rad - m_pupil_rad;
 
+    // Set the pupil position.
     if (mouse_dist < max_look_rad) {
         setLookPos(p_mouse.pos_wrt_window);
     } else {
