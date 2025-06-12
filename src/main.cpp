@@ -27,7 +27,7 @@
 #include "graphics/Texture.h"
 
 // AbeArgs includes.
-#include <abeargs/abeargs.h>
+#include "abeargs.h"
 
 // SDL includes.
 #include <SDL2/SDL.h>
