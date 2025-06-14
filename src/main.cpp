@@ -21,6 +21,7 @@
 #elif defined(__linux__)
 #include "platform/LinuxSystem.h"
 #endif
+#include "AbeEyesConfig.h"
 #include "Eyeball.h"
 #include "MouseAttrs.h"
 #include "graphics/AlignTypes.h"
@@ -52,12 +53,19 @@ AbeEyes::MouseAttrs g_mouse;
 std::map<std::string, AbeEyes::Eyeball> g_eyeball_layer;
 
 // Function prototypes.
+// Parse any command line arguments.
+bool
+parseCommandLineArgs(int argc, char* argv[], bool* err);
 // Shut down SDL and free resources.
 void
 close();
 // An info dialog.
 void
-showAbout();
+showAboutGUI();
+void
+showVersion();
+void
+showHelp(const AbeArgs::Parser& parser);
 // Detect if a click event occurred.
 bool
 detectClickEvent();
@@ -77,6 +85,46 @@ render();
 void
 update();
 
+bool
+parseCommandLineArgs(int argc, char* argv[], bool* err)
+{
+    using namespace AbeArgs;
+    const int X_POS_ID = 1;
+    const int Y_POS_ID = 2;
+    const int VERSION_ID = 3;
+    const int HELP_ID = 4;
+    Parser parser;
+    parser.addArgument({ OPTIONAL, X_POS_ID, "x", "x_pos", "The window's x position.", INTEGER_t });
+    parser.addArgument({ OPTIONAL, Y_POS_ID, "y", "y_pos", "The window's y position.", INTEGER_t });
+    parser.addArgument({ X_SWITCH, VERSION_ID, "v", "version", "Show version information and exit." });
+    parser.addArgument({ X_SWITCH, HELP_ID, "h", "help", "Show this help information and exit." });
+
+    ParsedArguments_t results = parser.exec(argc, argv);
+    if (parser.error()) {
+        std::cerr << parser.getErrorMsg() << "\n";
+        *err = true;
+        return false;
+    }
+
+    for (const auto& r : results)
+        switch (r.first) {
+            case X_POS_ID:
+                g_win_rect.x = std::get<int>(r.second);
+                break;
+            case Y_POS_ID:
+                g_win_rect.y = std::get<int>(r.second);
+                break;
+            case VERSION_ID:
+                showVersion();
+                return false;
+            case HELP_ID:
+                showHelp(parser);
+                return false;
+        }
+
+    return true;
+}
+
 int
 main(int argc, char* argv[])
 {
@@ -84,6 +132,15 @@ main(int argc, char* argv[])
     if (g_system.error()) {
         std::cerr << g_system.getErrorMsg() << "\n";
         return EXIT_FAILURE;
+    }
+
+    if (argc > 1) {
+        bool err = false;
+        const bool ok = parseCommandLineArgs(argc, argv, &err);
+        if (err)
+            return EXIT_FAILURE;
+        if (!ok)
+            return EXIT_SUCCESS;
     }
 
     if (!initSDL())
@@ -117,7 +174,7 @@ mainLoop()
                 int d_xy = (with_lshift ? 1 : (with_rshift ? 10 : 0));
                 switch (e.key.keysym.sym) {
                     case SDLK_a:
-                        showAbout();
+                        showAboutGUI();
                         break;
                     case SDLK_q:
                         running = false;
@@ -172,11 +229,34 @@ close()
 }
 
 void
-showAbout()
+showAboutGUI()
 {
     const std::string title = "About " + std::string{ g_app_name };
-    const char* message = "Googly eyes for your desktop.\n\nCopyright (c) 2025, Abe Mishler.";
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, title.c_str(), message, nullptr);
+    const std::string msg = "Googly eyes for your desktop.\nCopyright (c) 2025, Abe Mishler.\n\nv" + std::string{ ABEEYES_VERSION };
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, title.c_str(), msg.c_str(), nullptr);
+}
+
+void
+showVersion()
+{
+    printf("%s v%s\nGoogly eyes for your desktop.\n", g_app_name, ABEEYES_VERSION);
+}
+
+void
+showHelp(const AbeArgs::Parser& parser)
+{
+    showVersion();
+    printf("\nHelp:\n");
+
+    AbeArgs::ArgumentList_t list = parser.getArguments();
+    for (size_t i = 0, n = list.size(); i < n; ++i) {
+        std::cout << list[i].toString();
+        printf("\n");
+
+        if (i < n - 1 && list[i].hasDefaultValue())
+            printf("\n");
+    }
+    printf("\n");
 }
 
 bool
@@ -227,9 +307,12 @@ initSDL()
     if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest"))
         std::cout << "Failure to enable linear texture filtering\n";
 
+    if (g_win_rect.x == 0 && g_win_rect.y == 0)
+        // Align the window to the screen edge if x and y are still default values.
+        g_system.updateWindowRect(AbeEyes::HAlign::RIGHT, AbeEyes::VAlign::BOTTOM, g_win_rect);
+
     // Make a borderless window and place it in the lower right corner.
     const Uint32 win_flags = /*| SDL_WINDOW_UTILITY */ SDL_WINDOW_BORDERLESS;
-    g_system.updateWindowRect(AbeEyes::HAlign::RIGHT, AbeEyes::VAlign::BOTTOM, g_win_rect);
     gp_sdl_window = SDL_CreateWindow(g_app_name, g_win_rect.x, g_win_rect.y, g_win_rect.w, g_win_rect.h, win_flags);
     if (!gp_sdl_window) {
         std::cerr << "Failure to create SDL Window: " << SDL_GetError() << "\n";
