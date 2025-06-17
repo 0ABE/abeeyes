@@ -24,6 +24,7 @@
 #include "AbeEyesConfig.h"
 #include "Eyeball.h"
 #include "MouseAttrs.h"
+#include "Timer.h"
 #include "graphics/AlignTypes.h"
 #include "graphics/Texture.h"
 
@@ -40,7 +41,7 @@
 
 // Globals.
 const char* g_app_name = "AbeEyes";
-SDL_Rect g_win_rect{ 0, 0, 128, 64 };
+SDL_Rect g_win_rect{ -1, -1, 128, 64 };
 #if defined(__APPLE__)
 AbeEyes::MacSystem g_system;
 #elif defined(__linux__)
@@ -49,6 +50,7 @@ AbeEyes::LinuxSystem g_system;
 SDL_Window* gp_sdl_window = nullptr;
 SDL_Renderer* gp_sdl_renderer = nullptr;
 AbeEyes::MouseAttrs g_mouse;
+AbeEyes::Timer g_refresh_timer{ 60 };
 // A "layer" for eyeball rendering.
 std::map<std::string, AbeEyes::Eyeball> g_eyeball_layer;
 
@@ -161,6 +163,9 @@ mainLoop()
 {
     bool running = true;
     while (running) {
+        // Start recording the time taken by this frame.
+        g_refresh_timer.start();
+
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
             if (SDL_QUIT == e.type) {
@@ -208,10 +213,20 @@ mainLoop()
                 // Update the win rect with the actual position in case desktop furniture got in the way.
                 SDL_GetWindowPosition(gp_sdl_window, &g_win_rect.x, &g_win_rect.y);
             }
-        }
+        } // end while poll event
+
         if (running) {
             update();
             render();
+
+            // Stop recording, and save the frame duration.
+            const Uint32 dt = g_refresh_timer.stop();
+            // Calculate the time to sleep based on the frame duration and desired frame rate.
+            const Uint32 sleep_millis = g_refresh_timer.getDelay(dt);
+            if (sleep_millis > 0) {
+                // Sleep to control the frame rate.
+                SDL_Delay(sleep_millis);
+            }
         }
     } // end while running
 }
@@ -307,8 +322,8 @@ initSDL()
     if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest"))
         std::cout << "Failure to enable linear texture filtering\n";
 
-    if (g_win_rect.x == 0 && g_win_rect.y == 0)
-        // Align the window to the screen edge if x and y are still default values.
+    if (g_win_rect.x < 0 && g_win_rect.y < 0)
+        // Align the window to the screen edge if x and y haven't been set.
         g_system.updateWindowRect(AbeEyes::HAlign::RIGHT, AbeEyes::VAlign::BOTTOM, g_win_rect);
 
     // Make a borderless window and place it in the lower right corner.
@@ -325,12 +340,23 @@ initSDL()
     // above due to other system furniture like a dock or taskbar.
     SDL_GetWindowPosition(gp_sdl_window, &g_win_rect.x, &g_win_rect.y);
 
-    const Uint32 renderer_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
+    // SDL_RENDERER_PRESENTVSYNC matches the frame rate to the monitor refresh rate.
+    const Uint32 renderer_flags = SDL_RENDERER_ACCELERATED; // | SDL_RENDERER_PRESENTVSYNC;
     gp_sdl_renderer = SDL_CreateRenderer(gp_sdl_window, -1, renderer_flags);
     if (!gp_sdl_renderer) {
         std::cerr << "Failure to create SDL Renderer: " << SDL_GetError() << "\n";
         close();
         return false;
+    }
+
+    SDL_DisplayMode sdl_display_mode;
+    if (SDL_GetDesktopDisplayMode(0, &sdl_display_mode) < 0) {
+        std::cerr << "Failure to get SDL Desktop Display Mode: " << SDL_GetError() << "\n";
+        // Go with the default frame rate set into the constructor.
+    } else {
+        // std::cout << "Setting fps: " << sdl_display_mode.refresh_rate << "\n";
+        // Update the frame rate based on the current detected display mode.
+        g_refresh_timer.setFrameRate(sdl_display_mode.refresh_rate);
     }
 
     // Set the render color to white.

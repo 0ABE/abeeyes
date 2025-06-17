@@ -20,7 +20,7 @@ message(STATUS "Using CMake version " ${CMAKE_VERSION})
 
 include(FetchContent)
 
-project("AbeEyes" VERSION 0.1.250610)
+project("AbeEyes" VERSION 0.1.250616)
 configure_file(
   "${CMAKE_SOURCE_DIR}/AbeEyesConfig.h.in" 
   "${CMAKE_BINARY_DIR}/AbeEyesConfig.h"
@@ -74,6 +74,8 @@ list(APPEND SRC_CODE
   "src/Eyeball.cpp"
   "src/Eyeball.h"
   "src/MouseAttrs.h"
+  "src/Timer.cpp"
+  "src/Timer.h"
   "src/main.cpp"
 )
 
