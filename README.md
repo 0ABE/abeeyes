@@ -12,7 +12,7 @@ AbeEyes is a fun desktop application that draws animated Googly Eyes in a window
 
 ### Prerequisites
 - C++20 compatible compiler
-- [SDL2](https://www.libsdl.org/) and [SDL2_image](https://www.libsdl.org/projects/SDL_image/) libraries
+- [SDL2](https://github.com/libsdl-org/SDL) and [SDL2_image](https://github.com/libsdl-org/SDL_image) libraries
 - CMake (for building)
 
 ### Build Instructions
