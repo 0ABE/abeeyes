@@ -21,7 +21,7 @@
 #include "graphics/SpriteList.h"
 
 // SDL includes.
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 namespace AbeEyes {
 

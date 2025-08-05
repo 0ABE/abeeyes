@@ -18,7 +18,7 @@
 #pragma once
 
 // Library includes.
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <string>
 
 // Forward declarations.

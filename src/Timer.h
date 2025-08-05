@@ -18,7 +18,7 @@
 #pragma once
 
 // SDL includes.
-#include <SDL2/SDL_timer.h>
+#include <SDL_timer.h>
 
 namespace AbeEyes {
 

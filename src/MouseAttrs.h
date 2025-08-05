@@ -18,7 +18,7 @@
 #pragma once
 
 // SDL library includes.
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 namespace AbeEyes {
 

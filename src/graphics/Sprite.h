@@ -18,7 +18,7 @@
 #pragma once
 
 // Library includes.
-#include <SDL2/SDL_rect.h>
+#include <SDL_rect.h>
 
 // Forward declarations.
 namespace AbeEyes {

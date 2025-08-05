@@ -19,7 +19,6 @@
 
 // Project includes.
 #include "states/BlinkState.h"
-#include "states/EyeState.h"
 #include "states/LookState.h"
 
 // Standard library includes.
@@ -27,9 +26,11 @@
 
 // Forward includes.
 namespace AbeEyes {
+class EyeState;
 class MouseAttrs;
 }
 class SDL_Point;
+class SDL_Rect;
 
 namespace AbeEyes {
 

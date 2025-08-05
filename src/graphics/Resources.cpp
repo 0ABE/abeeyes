@@ -136,4 +136,4 @@ Resources::getTexture(const char* p_name)
     return nullptr;
 }
 
-}; // namespace AbeEyes
+} // namespace AbeEyes

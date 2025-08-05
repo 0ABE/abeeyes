@@ -19,6 +19,8 @@
 
 #include "../MouseAttrs.h"
 
+#include <cmath>
+
 namespace AbeEyes {
 
 LookState::LookState()

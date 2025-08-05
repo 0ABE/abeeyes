@@ -21,7 +21,7 @@
 #include "Resources.h"
 
 // SDL includes.
-#include <SDL2/SDL_rect.h>
+#include <SDL_rect.h>
 
 namespace AbeEyes {
 

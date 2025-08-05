@@ -20,20 +20,23 @@
 #include "platform/MacSystem.h"
 #elif defined(__linux__)
 #include "platform/LinuxSystem.h"
+#elif defined(_WIN32) || defined(_WIN64)
+#include "platform/WinSystem.h"
 #endif
 #include "AbeEyesConfig.h"
 #include "Eyeball.h"
 #include "MouseAttrs.h"
 #include "Timer.h"
 #include "graphics/AlignTypes.h"
+#include "graphics/Resources.h"
 #include "graphics/Texture.h"
 
 // AbeArgs includes.
 #include "abeargs.h"
 
 // SDL includes.
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL.h>
+#include <SDL_image.h>
 
 // Standard library includes.
 #include <iostream>
@@ -46,6 +49,8 @@ SDL_Rect g_win_rect{ -1, -1, 128, 64 };
 AbeEyes::MacSystem g_system;
 #elif defined(__linux__)
 AbeEyes::LinuxSystem g_system;
+#elif defined(_WIN32) || defined(_WIN64)
+AbeEyes::WinSystem g_system;
 #endif
 SDL_Window* gp_sdl_window = nullptr;
 SDL_Renderer* gp_sdl_renderer = nullptr;
@@ -96,8 +101,8 @@ parseCommandLineArgs(int argc, char* argv[], bool* err)
     const int VERSION_ID = 3;
     const int HELP_ID = 4;
     Parser parser;
-    parser.addArgument({ OPTIONAL, X_POS_ID, "x", "x_pos", "The window's x position.", INTEGER_t });
-    parser.addArgument({ OPTIONAL, Y_POS_ID, "y", "y_pos", "The window's y position.", INTEGER_t });
+    parser.addArgument({ OPTIONAL, X_POS_ID, "x", "x_pos", "The window's x position.", INTEGER_TYPE });
+    parser.addArgument({ OPTIONAL, Y_POS_ID, "y", "y_pos", "The window's y position.", INTEGER_TYPE });
     parser.addArgument({ X_SWITCH, VERSION_ID, "v", "version", "Show version information and exit." });
     parser.addArgument({ X_SWITCH, HELP_ID, "h", "help", "Show this help information and exit." });
 
@@ -268,7 +273,7 @@ showHelp(const AbeArgs::Parser& parser)
         std::cout << list[i].toString();
         printf("\n");
 
-        if (i < n - 1 && list[i].hasDefaultValue())
+        if (i < n - 0 && list[i].hasDefaultValue())
             printf("\n");
     }
     printf("\n");
@@ -285,15 +290,16 @@ detectClickEvent()
 bool
 initResources()
 {
+    using namespace AbeEyes;
     // Load the spritesheet as a texture for clipping into Sprites.
-    AbeEyes::Texture* spritesheet = AbeEyes::Resources::addTexture({ gp_sdl_renderer });
+    Texture* spritesheet = Resources::addTexture({ gp_sdl_renderer });
     const char* file_path = "../rsrc/blink_sheet.png";
     if (!spritesheet->load(file_path, { 0xD7, 0x7B, 0xBA, SDL_ALPHA_OPAQUE })) {
         return false;
     }
 
     // Create the eyes.
-    AbeEyes::Eyeball
+    Eyeball
       left_eye({ 32, 32 }),
       right_eye({ 96, 32 });
 
@@ -320,7 +326,7 @@ initSDL()
     }
 
     if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest"))
-        std::cout << "Failure to enable linear texture filtering\n";
+        std::cerr << "Failure to enable linear texture filtering\n";
 
     if (g_win_rect.x < 0 && g_win_rect.y < 0)
         // Align the window to the screen edge if x and y haven't been set.
@@ -382,6 +388,7 @@ initSDL()
 void
 update()
 {
+    // Update the mouse position and button state.
     const bool click_event = detectClickEvent();
     for (auto& it : g_eyeball_layer) {
         if (click_event)
@@ -393,6 +400,7 @@ update()
 void
 render()
 {
+    // Clear the renderer with the current draw color.
     SDL_SetRenderDrawColor(gp_sdl_renderer, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(gp_sdl_renderer);
 

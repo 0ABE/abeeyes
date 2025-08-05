@@ -19,9 +19,9 @@
 #include "Texture.h"
 
 // SDL includes.
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_pixels.h>
-#include <SDL2/SDL_surface.h>
+#include <SDL_image.h>
+#include <SDL_pixels.h>
+#include <SDL_surface.h>
 
 // Standard library includes.
 #include <iostream>

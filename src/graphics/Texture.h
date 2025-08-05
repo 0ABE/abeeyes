@@ -18,8 +18,8 @@
 #pragma once
 
 // SDL includes.
-#include <SDL2/SDL_blendmode.h>
-#include <SDL2/SDL_stdinc.h>
+#include <SDL_blendmode.h>
+#include <SDL_stdinc.h>
 
 // Forward declarations.
 class SDL_Color;
