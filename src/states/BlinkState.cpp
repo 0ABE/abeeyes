@@ -22,20 +22,20 @@ namespace AbeEyes {
 BlinkState::BlinkState()
 {
     Texture* spritesheet = Resources::getTexture();
-    SDL_Rect dest_rect{ 0, 0, 64, 64 };
+    SDL_Point dest{ 64, 64 };
 
     // Add the blinking eyelids.
     SpriteList* blink = m_eyelid.addSpriteList({ spritesheet });
     int x = 64;
     auto nextX = [&]() { return x += 32; };
-    blink->addSprite({ { x, 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
-      ->addSprite({ { nextX(), 0, 32, 32 }, dest_rect })
+    blink->addSprite({ { x, 0, 32, 32 }, dest })
+      ->addSprite({ { nextX(), 0, 32, 32 }, dest })
+      ->addSprite({ { nextX(), 0, 32, 32 }, dest })
+      ->addSprite({ { nextX(), 0, 32, 32 }, dest })
+      ->addSprite({ { nextX(), 0, 32, 32 }, dest })
+      ->addSprite({ { nextX(), 0, 32, 32 }, dest })
+      ->addSprite({ { nextX(), 0, 32, 32 }, dest })
+      ->addSprite({ { nextX(), 0, 32, 32 }, dest })
       ->setLoopType(AbeEyes::LoopType::PING_PONG)
       ->setLoopLimit(1);
 }

@@ -24,29 +24,29 @@
 
 namespace AbeEyes {
 
-Sprite::Sprite(const SDL_Rect& p_rect)
-  : m_rect(p_rect)
-  , m_dest(p_rect)
+Sprite::Sprite(const SDL_Rect& p_src_rect)
+  : m_src_rect(p_src_rect)
+  , m_size{ p_src_rect.w, p_src_rect.h }
 {
 }
 
-Sprite::Sprite(const SDL_Rect& p_rect, const SDL_Rect& p_dest)
-  : m_rect(p_rect)
-  , m_dest(p_dest)
+Sprite::Sprite(const SDL_Rect& p_src_rect, const SDL_Point& p_size)
+  : m_src_rect(p_src_rect)
+  , m_size(p_size)
 {
 }
 
-Sprite::Sprite(const SDL_Rect& p_rect, const SDL_Rect& p_dest, const SDL_Point& p_origin, Texture* p_texture)
-  : m_rect(p_rect)
-  , m_dest(p_dest)
+Sprite::Sprite(const SDL_Rect& p_src_rect, const SDL_Point& p_size, const SDL_Point& p_origin, Texture* p_texture)
+  : m_src_rect(p_src_rect)
+  , m_size(p_size)
   , m_origin(p_origin)
   , mp_texture(p_texture)
 {
 }
 
-Sprite::Sprite(const SDL_Rect& p_rect, const SDL_Rect& p_dest, Texture* p_texture)
-  : m_rect(p_rect)
-  , m_dest(p_dest)
+Sprite::Sprite(const SDL_Rect& p_src_rect, const SDL_Point& p_size, Texture* p_texture)
+  : m_src_rect(p_src_rect)
+  , m_size(p_size)
   , mp_texture(p_texture)
 {
 }
@@ -56,8 +56,8 @@ Sprite::~Sprite() = default;
 // void
 // Sprite::setSize(const SDL_Point& p_size)
 // {
-//     m_rect.w = p_size.x;
-//     m_rect.h = p_size.y;
+//     m_src_rect.w = p_size.x;
+//     m_src_rect.h = p_size.y;
 // }
 
 void
@@ -71,11 +71,14 @@ Sprite::render(const SDL_Point& p_pos) const
         return;
     }
 
-    // Offset by the origin amount.
-    m_dest.x = p_pos.x - m_origin.x;
-    m_dest.y = p_pos.y - m_origin.y;
+    // Create the destination rectangle based on the position and size.
+    SDL_Rect dest_rect{ p_pos.x, p_pos.y, m_size.x, m_size.y };
+    // Offset the position by the origin amount.
+    dest_rect.x -= m_origin.x;
+    dest_rect.y -= m_origin.y;
 
-    mp_texture->render(m_rect, m_dest);
+    // Render the texture using the source rectangle and destination rectangle.
+    mp_texture->render(m_src_rect, dest_rect);
 }
 
 void

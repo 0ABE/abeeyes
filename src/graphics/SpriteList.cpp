@@ -149,13 +149,13 @@ SpriteList::isRenderLoopDone() const
 // }
 
 SDL_Rect
-SpriteList::getRect() const
+SpriteList::getSrcRect() const
 {
     if (m_list.empty())
         return { 0, 0, 0, 0 };
 
     // Return the current sprite rect.
-    return m_list[m_current].getRect();
+    return m_list[m_current].getSrcRect();
 }
 
 void

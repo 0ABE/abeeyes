@@ -57,7 +57,7 @@ class SpriteList
     bool isRenderLoopDone() const;
 
     // void setSize(const SDL_Point& p_size);
-    SDL_Rect getRect() const;
+    SDL_Rect getSrcRect() const;
 
     size_t size() const { return m_list.size(); }
 

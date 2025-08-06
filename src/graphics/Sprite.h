@@ -36,13 +36,13 @@ class Sprite
 {
   public:
     Sprite() = delete;
-    Sprite(const SDL_Rect& p_rect);
-    Sprite(const SDL_Rect& p_rect, const SDL_Rect& p_dest);
-    Sprite(const SDL_Rect& p_rect, const SDL_Rect& p_dest, Texture* p_texture);
-    Sprite(const SDL_Rect& p_rect, const SDL_Rect& p_dest, const SDL_Point& p_origin, Texture* p_texture);
+    Sprite(const SDL_Rect& p_src_rect);
+    Sprite(const SDL_Rect& p_src_rect, const SDL_Point& p_size);
+    Sprite(const SDL_Rect& p_src_rect, const SDL_Point& p_size, Texture* p_texture);
+    Sprite(const SDL_Rect& p_src_rect, const SDL_Point& p_size, const SDL_Point& p_origin, Texture* p_texture);
     ~Sprite();
 
-    SDL_Rect getRect() const { return m_rect; }
+    SDL_Rect getSrcRect() const { return m_src_rect; }
 
     bool isVisible() const { return m_visible; }
     void render(const SDL_Point& p_pos) const;
@@ -56,9 +56,9 @@ class Sprite
   private:
     Texture* mp_texture = nullptr;
     SDL_Renderer* mp_sdl_renderer = nullptr;
-    SDL_Rect m_rect = { 0 };
-    mutable SDL_Rect m_dest = { 0 }; // updated by render()
-    SDL_Point m_origin = { 0 };      // origin offset
+    SDL_Rect m_src_rect = { 0 };
+    SDL_Point m_size = { 0 };
+    SDL_Point m_origin = { 0 }; // origin offset
     bool m_visible = true;
 };
 

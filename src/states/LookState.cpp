@@ -26,18 +26,17 @@ namespace AbeEyes {
 LookState::LookState()
 {
     Texture* spritesheet = Resources::getTexture();
-    SDL_Rect dest_rect{ 0, 0, 64, 64 };
 
     // Add the white of the eye (and background.)
-    m_white.addSprite({ { 0, 0, 32, 32 }, dest_rect, spritesheet });
+    m_white.addSprite({ { 0, 0, 32, 32 }, { 64, 64 }, spritesheet });
     m_white.setPosition({ 0, 0 });
     m_white_rad = 32;
 
     // Add the pupils (S/M/L/XL)
-    m_pupil.addSprite({ { 32, 0, 5, 5 }, { 0, 0, 10, 10 }, { 5, 5 }, spritesheet });
-    m_pupil.addSprite({ { 48, 0, 8, 8 }, { 0, 0, 16, 16 }, { 8, 8 }, spritesheet });
-    m_pupil.addSprite({ { 32, 16, 12, 12 }, { 0, 0, 24, 24 }, { 12, 12 }, spritesheet });
-    m_pupil.addSprite({ { 48, 16, 16, 16 }, { 0, 0, 32, 32 }, { 16, 16 }, spritesheet });
+    m_pupil.addSprite({ { 32, 0, 5, 5 }, { 10, 10 }, { 5, 5 }, spritesheet });
+    m_pupil.addSprite({ { 48, 0, 8, 8 }, { 16, 16 }, { 8, 8 }, spritesheet });
+    m_pupil.addSprite({ { 32, 16, 12, 12 }, { 24, 24 }, { 12, 12 }, spritesheet });
+    m_pupil.addSprite({ { 48, 16, 16, 16 }, { 32, 32 }, { 16, 16 }, spritesheet });
     m_pupil.setPosition({ 0, 0 });
 
     // Set a medium pupil by default.
