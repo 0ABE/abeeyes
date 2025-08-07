@@ -2,6 +2,14 @@
 
 AbeEyes is a fun desktop application that draws animated Googly Eyes in a window on your desktop. The eyes follow your mouse cursor, blink, and add a playful touch to your workspace.
 
+## Demo
+<div align="center">
+  <img src="demo/abeeyes-demo.gif" alt="AbeEyes Demo" />
+  <br>
+  <em>Watch as the eyes smoothly track your cursor movement and blink<br>
+with each mouse click, creating a lively desktop companion!</em>
+</div>
+
 ## Features
 - Animated Googly Eyes that track your mouse
 - Blinking and idle states for more lifelike behavior
