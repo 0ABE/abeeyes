@@ -17,13 +17,7 @@
 # 
 # cmake-format: on
 
-# Find the X11 libraries for Linux.
-find_package(X11 REQUIRED)
-if(NOT X11_FOUND)
-  message(FATAL_ERROR "X11 libraries not found")
-endif()
-
-# Define the SDL2 and SDL2_image archives for Linux.
+# Define the SDL2 and SDL2_image archives for macOS (shared with Linux).
 set(SDL2_ARCHIVE "libs/thirdparty/linux/SDL2-2.32.8.tar.gz")
 set(SDL2IMAGE_ARCHIVE "libs/thirdparty/linux/SDL2_image-2.8.8.tar.gz")
 
@@ -47,9 +41,11 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC_CODE})
 # Set the include path for compiling the target. Include the current binary
 # directory for the config file which defines version info.
 target_include_directories(
-  ${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR} ${X11_INCLUDE_DIRS}
+  ${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR} 
                                 ${ABEARGS_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS})
 
-# Link the following libraries into the target executable.
+# Link the following libraries into the target executable, including the
+# CoreGraphics and Foundation libs for macOS.
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE AbeArgs SDL2 SDL2_image
-                                                    ${X11_LIBRARIES})
+                                                    "-framework CoreGraphics"
+                                                    "-framework Foundation")

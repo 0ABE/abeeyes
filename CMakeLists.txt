@@ -33,17 +33,27 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 # ----------------------------------------------------
 
-unset(GNU_LINUX)
+set(APPLECLANG_DARWIN FALSE)
+if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
+    set(APPLECLANG_DARWIN TRUE)
+  else()
+    message(FATAL_ERROR "SDL2 requires the Clang compiler on Darwin systems.")
+    return()
+  endif()
+endif()
+
+set(GNU_LINUX FALSE)
 if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   set(GNU_LINUX TRUE)
 endif()
 
-unset(GNU_WINDOWS)
+set(GNU_WINDOWS FALSE)
 if(CMAKE_SYSTEM_NAME MATCHES "Windows" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   set(GNU_WINDOWS TRUE)
 endif()
 
-unset(MSVC_WINDOWS)
+set(MSVC_WINDOWS FALSE)
 if(CMAKE_SYSTEM_NAME MATCHES "Windows" AND CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   set(MSVC_WINDOWS TRUE)
 endif()
@@ -107,7 +117,10 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(AbeArgs)
 message(STATUS "AbeArgs include dir: " ${ABEARGS_INCLUDE_DIR})
 
-if(GNU_LINUX)
+if(APPLECLANG_DARWIN)
+  message(STATUS "Building on macOS/Darwin system: " ${CMAKE_SYSTEM_NAME})
+  include("AppleClang_Darwin.cmake")
+elseif(GNU_LINUX)
   message(STATUS "Building on GNU/Linux system: " ${CMAKE_SYSTEM_NAME})
   include("GNU_Linux.cmake")
 elseif(GNU_WINDOWS)
@@ -117,11 +130,3 @@ elseif(MSVC_WINDOWS)
   message(STATUS "Building on Windows system: " ${CMAKE_SYSTEM_NAME})
   include("MSVC_Windows.cmake")
 endif()
-
-# cmake-format: off
-# if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-#   # Link the CoreGraphics and Foundation libs for macOS.
-#   target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE "-framework CoreGraphics"
-#                                                       "-framework Foundation")
-# endif()
-# cmake-format: on
