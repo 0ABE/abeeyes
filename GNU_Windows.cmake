@@ -68,6 +68,13 @@ set(SDL2IMAGE_BIN_DIR "${SDL2IMAGE_DEP_DIR}/bin")
 # Add source code to this project's executable with Windows subsystem.
 add_executable(${CMAKE_PROJECT_NAME} WIN32 ${SRC_CODE})
 
+# cmake-format: off
+# To force console window (show std output)
+# target_link_options(${CMAKE_PROJECT_NAME} PRIVATE "-mconsole")
+# To hide console window (no std output)
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE "-mwindows")
+# cmake-format: on
+
 # Set the include path for compiling the target. Include the current binary
 # directory for the config file which defines version info.
 target_include_directories(

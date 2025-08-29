@@ -26,11 +26,12 @@ find_package(SDL2_image REQUIRED CONFIG REQUIRED COMPONENTS SDL2_image)
 # Add source code to this project's executable.
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_CODE})
 
-# Set a Windows subsystem instead of console. This is necessary for the WinMain
-# entry point. This will prevent a console window from appearing when the
-# application is run.
-set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS
-                                                       "/SUBSYSTEM:WINDOWS")
+# cmake-format: off
+# To force console window (show std output)
+# target_link_options(${CMAKE_PROJECT_NAME} PRIVATE "/SUBSYSTEM:CONSOLE")
+# To hide console window (no std output)
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE "/SUBSYSTEM:WINDOWS")
+# cmake-format: on
 
 # Set the include path for compiling the target. Include the current binary
 # directory for the config file which defines version info.
